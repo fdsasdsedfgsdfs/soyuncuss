@@ -1,88 +1,256 @@
-// Main JavaScript file for MinecraftTR website
+// MinecraftTR - Main JavaScript
+// Ana JavaScript dosyası - Modern ve işlevsel kod
 
-// Global configuration
-const config = {
-    apiBaseUrl: '/api',
-    updateInterval: 30000, // 30 seconds
-    animationDuration: 300
-};
+'use strict';
 
 // Utility functions
 const utils = {
-    // Format numbers with Turkish locale
+    // Sayı formatla (1000 -> 1K)
     formatNumber: (num) => {
-        return new Intl.NumberFormat('tr-TR').format(num);
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toString();
     },
-
-    // Format date with Turkish locale
+    
+    // Tarih formatla
     formatDate: (date) => {
-        return new Intl.DateTimeFormat('tr-TR', {
+        return new Date(date).toLocaleDateString('tr-TR', {
             year: 'numeric',
             month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(new Date(date));
+            day: 'numeric'
+        });
     },
-
-    // Show toast notification
-    showToast: (message, type = 'info', duration = 5000) => {
+    
+    // Toast bildirimi göster
+    showToast: (message, type = 'success') => {
         const toast = document.createElement('div');
-        toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
-        
-        const colors = {
-            success: 'bg-green-500 text-white',
-            error: 'bg-red-500 text-white',
-            warning: 'bg-yellow-500 text-black',
-            info: 'bg-blue-500 text-white'
-        };
-        
-        toast.className += ` ${colors[type] || colors.info}`;
-        toast.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation' : 'info'} mr-2"></i>
-                <span>${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 opacity-70 hover:opacity-100">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
         `;
         
+        const icon = type === 'success' ? 'fas fa-check' : 
+                    type === 'error' ? 'fas fa-times' : 'fas fa-info';
+        
+        toast.innerHTML = `<i class="${icon}" style="margin-right: 8px;"></i>${message}`;
         document.body.appendChild(toast);
         
         // Animate in
         setTimeout(() => {
-            toast.classList.remove('translate-x-full');
+            toast.style.transform = 'translateX(0)';
         }, 100);
         
-        // Auto remove
+        // Animate out and remove
         setTimeout(() => {
-            toast.classList.add('translate-x-full');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
-        }, duration);
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     },
-
-    // Copy text to clipboard
+    
+    // Clipboard'a kopyala
     copyToClipboard: async (text) => {
         try {
             await navigator.clipboard.writeText(text);
-            utils.showToast('Kopyalandı!', 'success');
+            return true;
         } catch (err) {
-            // Fallback for older browsers
+            // Fallback method
             const textArea = document.createElement('textarea');
             textArea.value = text;
             document.body.appendChild(textArea);
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            utils.showToast('Kopyalandı!', 'success');
+            return true;
         }
     },
+    
+    // Loading spinner göster/gizle
+    setLoading: (element, loading = true) => {
+        if (loading) {
+            element.disabled = true;
+            element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yükleniyor...';
+        } else {
+            element.disabled = false;
+            element.innerHTML = element.getAttribute('data-original-text') || 'Tamam';
+        }
+    }
+};
 
+// API functions
+const api = {
+    // Base API call
+    call: async (endpoint, options = {}) => {
+        try {
+            const response = await fetch(endpoint, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                },
+                ...options
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
+        }
+    },
+    
+    // Sunucu istatistiklerini al
+    getServerStats: () => api.call('/api/server/stats'),
+    
+    // Market item satın al
+    purchaseItem: (itemId) => api.call('/api/purchase', {
+        method: 'POST',
+        body: JSON.stringify({ itemId })
+    }),
+    
+    // Kullanıcı profili al
+    getUserProfile: (username) => api.call(`/api/profile/${username}`),
+    
+    // Haberler al
+    getNews: (limit = 10) => api.call(`/api/news?limit=${limit}`)
+};
+
+// Animation helpers
+const animations = {
+    // Sayı animasyonu
+    animateNumber: (element, target, duration = 2000) => {
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            
+            if (target % 1 === 0) {
+                element.textContent = Math.floor(current);
+            } else {
+                element.textContent = current.toFixed(1);
+            }
+        }, 16);
+    },
+    
+    // Fade in animasyonu
+    fadeIn: (element, duration = 500) => {
+        element.style.opacity = '0';
+        element.style.transition = `opacity ${duration}ms ease`;
+        
+        setTimeout(() => {
+            element.style.opacity = '1';
+        }, 10);
+    },
+    
+    // Slide up animasyonu
+    slideUp: (element, duration = 500) => {
+        element.style.transform = 'translateY(30px)';
+        element.style.opacity = '0';
+        element.style.transition = `all ${duration}ms ease`;
+        
+        setTimeout(() => {
+            element.style.transform = 'translateY(0)';
+            element.style.opacity = '1';
+        }, 10);
+    }
+};
+
+// Form validation
+const forms = {
+    // Email validation
+    validateEmail: (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    },
+    
+    // Password strength
+    getPasswordStrength: (password) => {
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+        
+        return {
+            score: strength,
+            text: ['Çok Zayıf', 'Zayıf', 'Orta', 'Güçlü', 'Çok Güçlü'][strength] || 'Çok Zayıf'
+        };
+    },
+    
+    // Form validation
+    validateForm: (formElement) => {
+        const inputs = formElement.querySelectorAll('input[required], select[required], textarea[required]');
+        let isValid = true;
+        
+        inputs.forEach(input => {
+            const value = input.value.trim();
+            const errorElement = input.parentNode.querySelector('.error-message');
+            
+            // Remove existing error
+            if (errorElement) {
+                errorElement.remove();
+            }
+            
+            if (!value) {
+                forms.showFieldError(input, 'Bu alan zorunludur');
+                isValid = false;
+            } else if (input.type === 'email' && !forms.validateEmail(value)) {
+                forms.showFieldError(input, 'Geçerli bir email adresi giriniz');
+                isValid = false;
+            }
+        });
+        
+        return isValid;
+    },
+    
+    // Show field error
+    showFieldError: (field, message) => {
+        const errorElement = document.createElement('div');
+        errorElement.className = 'error-message';
+        errorElement.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 5px;';
+        errorElement.textContent = message;
+        field.parentNode.appendChild(errorElement);
+        field.style.borderColor = '#ef4444';
+    }
+};
+
+// Theme manager
+const theme = {
+    // Dark mode toggle
+    toggleDarkMode: () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    },
+    
+    // Initialize theme
+    init: () => {
+        const savedTheme = localStorage.getItem('darkMode');
+        if (savedTheme === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+    }
+};
+
+// Search functionality
+const search = {
     // Debounce function
     debounce: (func, wait) => {
         let timeout;
@@ -95,331 +263,245 @@ const utils = {
             timeout = setTimeout(later, wait);
         };
     },
-
-    // Smooth scroll to element
-    scrollTo: (element, offset = 0) => {
-        const target = typeof element === 'string' ? document.querySelector(element) : element;
-        if (target) {
-            const targetPosition = target.offsetTop - offset;
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        }
-    }
-};
-
-// API functions
-const api = {
-    // Get server statistics
-    getServerStats: async () => {
-        try {
-            const response = await fetch(`${config.apiBaseUrl}/server/stats`);
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching server stats:', error);
-            return null;
-        }
-    },
-
-    // Get player profile
-    getPlayerProfile: async (username) => {
-        try {
-            const response = await fetch(`${config.apiBaseUrl}/player/${username}`);
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching player profile:', error);
-            return null;
-        }
-    },
-
-    // Purchase item
-    purchaseItem: async (itemId) => {
-        try {
-            const response = await fetch('/purchase', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ itemId })
-            });
-            return await response.json();
-        } catch (error) {
-            console.error('Error purchasing item:', error);
-            return { success: false, message: 'Bir hata oluştu!' };
-        }
-    }
-};
-
-// Server status updater
-const serverStatus = {
-    elements: [],
     
-    init: () => {
-        // Find all elements that need server status updates
-        serverStatus.elements = [
-            ...document.querySelectorAll('[data-server-stat]'),
-            document.getElementById('player-count'),
-            document.getElementById('hero-player-count')
-        ].filter(Boolean);
-        
-        if (serverStatus.elements.length > 0) {
-            serverStatus.update();
-            setInterval(serverStatus.update, config.updateInterval);
-        }
-    },
-    
-    update: async () => {
-        const stats = await api.getServerStats();
-        if (stats) {
-            serverStatus.elements.forEach(element => {
-                if (element.id === 'player-count') {
-                    element.textContent = `Oyuncu: ${stats.online_players}/${stats.max_players}`;
-                } else if (element.id === 'hero-player-count') {
-                    element.textContent = `${stats.online_players}/${stats.max_players} Oyuncu`;
-                } else {
-                    const statType = element.getAttribute('data-server-stat');
-                    if (stats[statType] !== undefined) {
-                        element.textContent = utils.formatNumber(stats[statType]);
-                    }
-                }
-            });
-        }
-    }
-};
-
-// Animation helpers
-const animations = {
-    // Counter animation
-    animateCounter: (element, target, duration = 2000) => {
-        const start = parseInt(element.textContent) || 0;
-        const increment = (target - start) / (duration / 16);
-        let current = start;
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
-                current = target;
-                clearInterval(timer);
-            }
-            element.textContent = Math.floor(current);
-        }, 16);
-    },
-
-    // Fade in animation
-    fadeIn: (element, duration = 300) => {
-        element.style.opacity = '0';
-        element.style.display = 'block';
-        
-        let opacity = 0;
-        const increment = 1 / (duration / 16);
-        
-        const timer = setInterval(() => {
-            opacity += increment;
-            if (opacity >= 1) {
-                opacity = 1;
-                clearInterval(timer);
-            }
-            element.style.opacity = opacity;
-        }, 16);
-    },
-
-    // Slide down animation
-    slideDown: (element, duration = 300) => {
-        element.style.height = '0';
-        element.style.overflow = 'hidden';
-        element.style.display = 'block';
-        
-        const targetHeight = element.scrollHeight;
-        let height = 0;
-        const increment = targetHeight / (duration / 16);
-        
-        const timer = setInterval(() => {
-            height += increment;
-            if (height >= targetHeight) {
-                height = targetHeight;
-                clearInterval(timer);
-                element.style.height = 'auto';
-                element.style.overflow = 'visible';
-            }
-            element.style.height = height + 'px';
-        }, 16);
-    }
-};
-
-// Form helpers
-const forms = {
-    // Validate username
-    validateUsername: (username) => {
-        const regex = /^[a-zA-Z0-9_]{3,16}$/;
-        return regex.test(username);
-    },
-
-    // Validate email
-    validateEmail: (email) => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    },
-
-    // Password strength checker
-    checkPasswordStrength: (password) => {
-        let strength = 0;
-        const checks = [
-            password.length >= 8,
-            /[a-z]/.test(password),
-            /[A-Z]/.test(password),
-            /[0-9]/.test(password),
-            /[^A-Za-z0-9]/.test(password)
-        ];
-        
-        strength = checks.filter(Boolean).length;
-        
-        const levels = ['Çok Zayıf', 'Zayıf', 'Orta', 'İyi', 'Güçlü'];
-        const colors = ['red', 'orange', 'yellow', 'green', 'green'];
-        
-        return {
-            score: strength,
-            level: levels[Math.min(strength, 4)],
-            color: colors[Math.min(strength, 4)],
-            percentage: (strength / 5) * 100
-        };
-    }
-};
-
-// Theme manager
-const theme = {
-    init: () => {
-        const saved = localStorage.getItem('theme');
-        if (saved) {
-            theme.set(saved);
-        }
-    },
-    
-    set: (themeName) => {
-        document.documentElement.setAttribute('data-theme', themeName);
-        localStorage.setItem('theme', themeName);
-    },
-    
-    toggle: () => {
-        const current = document.documentElement.getAttribute('data-theme');
-        theme.set(current === 'light' ? 'dark' : 'light');
-    }
-};
-
-// Search functionality
-const search = {
-    init: () => {
-        const searchInput = document.querySelector('[data-search]');
-        if (searchInput) {
-            searchInput.addEventListener('input', utils.debounce(search.perform, 300));
-        }
-    },
-    
-    perform: (event) => {
-        const query = event.target.value.toLowerCase();
-        const searchables = document.querySelectorAll('[data-searchable]');
-        
-        searchables.forEach(element => {
-            const text = element.textContent.toLowerCase();
-            const isVisible = text.includes(query);
-            element.style.display = isVisible ? 'block' : 'none';
-        });
+    // Search items
+    searchItems: (query, items) => {
+        const lowercaseQuery = query.toLowerCase();
+        return items.filter(item => 
+            item.name.toLowerCase().includes(lowercaseQuery) ||
+            item.description.toLowerCase().includes(lowercaseQuery)
+        );
     }
 };
 
 // Modal manager
 const modal = {
-    open: (modalId) => {
+    // Show modal
+    show: (modalId) => {
         const modal = document.getElementById(modalId);
         if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
+            modal.style.display = 'flex';
+            modal.style.opacity = '0';
+            modal.style.transition = 'opacity 0.3s ease';
+            
+            setTimeout(() => {
+                modal.style.opacity = '1';
+            }, 10);
+            
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.hide(modalId);
+                }
+            });
         }
     },
     
-    close: (modalId) => {
+    // Hide modal
+    hide: (modalId) => {
         const modal = document.getElementById(modalId);
         if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
         }
-    },
-    
-    init: () => {
-        // Close modal when clicking outside
-        document.addEventListener('click', (event) => {
-            if (event.target.classList.contains('modal-overlay')) {
-                const modalId = event.target.id;
-                modal.close(modalId);
+    }
+};
+
+// Server status manager
+const serverStatus = {
+    // Update player count
+    updatePlayerCount: async () => {
+        try {
+            const stats = await api.getServerStats();
+            const element = document.getElementById('player-count');
+            
+            if (element) {
+                element.textContent = `Oyuncu: ${stats.online_players}/${stats.max_players}`;
             }
+            
+            // Update other stats if present
+            const heroPlayerCount = document.getElementById('hero-player-count');
+            if (heroPlayerCount) {
+                heroPlayerCount.textContent = `${stats.online_players}/${stats.max_players} Oyuncu`;
+            }
+            
+        } catch (error) {
+            console.error('Failed to update player count:', error);
+        }
+    },
+    
+    // Initialize auto-update
+    init: () => {
+        serverStatus.updatePlayerCount();
+        setInterval(serverStatus.updatePlayerCount, 30000); // Update every 30 seconds
+    }
+};
+
+// Skin viewer (for Minecraft avatars)
+const skinViewer = {
+    // Get player skin URL
+    getSkinUrl: (username, size = 64) => {
+        return `https://crafatar.com/avatars/${username}?size=${size}`;
+    },
+    
+    // Get player head URL
+    getHeadUrl: (username, size = 32) => {
+        return `https://crafatar.com/heads/${username}?size=${size}`;
+    },
+    
+    // Load player skin
+    loadSkin: (username, element) => {
+        const img = element.querySelector('img') || element;
+        img.src = skinViewer.getSkinUrl(username);
+        img.onerror = () => {
+            img.src = '/images/default-avatar.png';
+        };
+    }
+};
+
+// Global functions (accessible from HTML)
+window.MinecraftTR = {
+    utils,
+    api,
+    animations,
+    forms,
+    theme,
+    search,
+    modal,
+    serverStatus,
+    skinViewer
+};
+
+// Copy IP function (used in HTML)
+window.copyIP = async () => {
+    const ip = 'play.minecrafttr.com';
+    try {
+        await utils.copyToClipboard(ip);
+        utils.showToast('IP adresi kopyalandı!');
+    } catch (error) {
+        utils.showToast('Kopyalama başarısız!', 'error');
+    }
+};
+
+// Toggle mobile menu
+window.toggleMobileMenu = () => {
+    const nav = document.getElementById('navbar-nav');
+    if (nav) {
+        nav.classList.toggle('active');
+    }
+};
+
+// Purchase item function
+window.purchaseItem = async (itemId) => {
+    try {
+        utils.setLoading(event.target, true);
+        const result = await api.purchaseItem(itemId);
+        
+        if (result.success) {
+            utils.showToast('Satın alma başarılı!');
+            // Refresh page or update UI
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            utils.showToast(result.message || 'Satın alma başarısız!', 'error');
+        }
+    } catch (error) {
+        utils.showToast('Bir hata oluştu!', 'error');
+    } finally {
+        utils.setLoading(event.target, false);
+    }
+};
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🎮 MinecraftTR Website Loaded!');
+    
+    // Initialize theme
+    theme.init();
+    
+    // Initialize server status
+    serverStatus.init();
+    
+    // Animate stat numbers
+    const statNumbers = document.querySelectorAll('[data-count]');
+    if (statNumbers.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseFloat(entry.target.getAttribute('data-count'));
+                    animations.animateNumber(entry.target, target);
+                    observer.unobserve(entry.target);
+                }
+            });
         });
         
-        // Close modal with escape key
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                const openModal = document.querySelector('.modal-overlay.flex');
-                if (openModal) {
-                    modal.close(openModal.id);
+        statNumbers.forEach(stat => observer.observe(stat));
+    }
+    
+    // Intersection Observer for scroll animations
+    const observeElements = document.querySelectorAll('.feature-card, .news-card, .donor-card, .market-card');
+    if (observeElements.length > 0) {
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animations.slideUp(entry.target);
+                    scrollObserver.unobserve(entry.target);
                 }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        observeElements.forEach(el => scrollObserver.observe(el));
+    }
+    
+    // Initialize forms
+    const forms_elements = document.querySelectorAll('form');
+    forms_elements.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            if (!forms.validateForm(form)) {
+                e.preventDefault();
             }
         });
-    }
-};
-
-// Intersection Observer for animations
-const observeElements = () => {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                
-                // Animate counters
-                if (entry.target.hasAttribute('data-count')) {
-                    const target = parseFloat(entry.target.getAttribute('data-count'));
-                    animations.animateCounter(entry.target, target);
-                }
-                
-                observer.unobserve(entry.target);
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        const nav = document.getElementById('navbar-nav');
+        const menuBtn = document.querySelector('.mobile-menu-btn');
+        
+        if (nav && nav.classList.contains('active') && 
+            !nav.contains(e.target) && 
+            !menuBtn.contains(e.target)) {
+            nav.classList.remove('active');
+        }
+    });
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
-    }, {
-        threshold: 0.1
     });
-
-    // Observe all elements with animation classes
-    document.querySelectorAll('[data-animate], [data-count]').forEach(el => {
-        observer.observe(el);
-    });
-};
-
-// Minecraft skin viewer
-const skinViewer = {
-    generateSkinUrl: (username, size = 64) => {
-        return `https://crafatar.com/avatars/${username}?size=${size}&overlay`;
-    },
     
-    generateBodyUrl: (username, size = 64) => {
-        return `https://crafatar.com/renders/body/${username}?size=${size}&overlay`;
-    },
-    
-    generateHeadUrl: (username, size = 64) => {
-        return `https://crafatar.com/renders/head/${username}?size=${size}&overlay`;
-    }
-};
-
-// Lazy loading for images
-const lazyLoad = {
-    init: () => {
-        const images = document.querySelectorAll('img[data-src]');
+    // Lazy load images
+    const images = document.querySelectorAll('img[data-src]');
+    if (images.length > 0) {
         const imageObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
                     img.src = img.dataset.src;
-                    img.classList.remove('opacity-0');
-                    img.classList.add('opacity-100');
+                    img.classList.remove('lazy');
                     imageObserver.unobserve(img);
                 }
             });
@@ -427,43 +509,71 @@ const lazyLoad = {
         
         images.forEach(img => imageObserver.observe(img));
     }
-};
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('MinecraftTR website loaded');
     
-    // Initialize components
-    serverStatus.init();
-    theme.init();
-    search.init();
-    modal.init();
-    lazyLoad.init();
-    observeElements();
-    
-    // Global IP copy function
-    window.copyIP = () => {
-        utils.copyToClipboard('play.minecrafttr.com');
-    };
-    
-    // Global functions for templates
-    window.utils = utils;
-    window.api = api;
-    window.modal = modal;
-    window.skinViewer = skinViewer;
+    // Add ripple effect to buttons
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                pointer-events: none;
+            `;
+            
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
 });
 
-// Export for use in other scripts
+// Add ripple animation CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .lazy {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .lazy.loaded {
+        opacity: 1;
+    }
+`;
+document.head.appendChild(style);
+
+// Console welcome message
+console.log(`
+🎮 MinecraftTR Website
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌟 Türkiye'nin En İyi Minecraft Sunucusu
+🔧 Modern JavaScript Framework Loaded
+📱 Responsive Design Active
+🚀 All Systems Ready!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+`);
+
+// Export for module usage (if needed)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        utils,
-        api,
-        animations,
-        forms,
-        theme,
-        search,
-        modal,
-        serverStatus,
-        skinViewer
-    };
+    module.exports = { utils, api, animations, forms, theme, search, modal, serverStatus, skinViewer };
 }

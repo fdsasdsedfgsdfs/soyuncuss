@@ -1,326 +1,469 @@
-<%- include('layout', { body: '' }) %>
-
-<!-- Hero Section -->
-<div class="relative bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 overflow-hidden">
-    <!-- Background animation -->
-    <div class="absolute inset-0 bg-black opacity-50"></div>
-    <div class="absolute inset-0" style="background-image: url('/images/minecraft-bg.jpg'); background-size: cover; background-position: center; opacity: 0.3;"></div>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinecraftTR - Türkiye'nin En İyi Minecraft Sunucusu</title>
+    <meta name="description" content="Türkiye'nin en büyük Minecraft sunucusu. BedWars, SkyWars, Survival, Market ve daha fazlası!">
+    <meta name="keywords" content="minecraft, server, turkey, bedwars, skywars, survival, türkçe">
     
-    <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-        <div class="text-center">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">
-                Türkiye'nin 
-                <span class="text-gradient bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                    En İyi
-                </span>
-                <br>Minecraft Sunucusu
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                Binlerce oyuncu ile BedWars, SkyWars, Survival ve daha fazlası! 
-                Hemen katıl ve eğlenceye başla!
-            </p>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    
+    <!-- CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/images/logo.png" alt="MinecraftTR" onerror="this.style.display='none'">
+                <span>MinecraftTR</span>
+            </a>
             
-            <!-- Server IP Copy -->
-            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                <div class="bg-gray-800 bg-opacity-80 backdrop-blur-sm rounded-lg px-6 py-3 flex items-center space-x-3">
-                    <i class="fas fa-server text-green-400"></i>
-                    <span class="text-lg font-mono text-white">play.minecrafttr.com</span>
-                    <button onclick="copyIP()" class="text-green-400 hover:text-green-300 transition-colors" title="IP'yi Kopyala">
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="/" class="nav-link active"><i class="fas fa-home"></i>Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i>Market</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link"><i class="fas fa-gamepad"></i>Oyunlar <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i>BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i>SkyWars</a>
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i>Survival</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i>Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-cube"></i>SkyBlock</a>
+                    </div>
+                </li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i>Haberler</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i>Sıralama</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link"><i class="fas fa-star"></i>Kozmetikler <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/cosmetics/particles" class="dropdown-item"><i class="fas fa-sparkles"></i>Parçacıklar</a>
+                        <a href="/cosmetics/pets" class="dropdown-item"><i class="fas fa-paw"></i>Evcil Hayvanlar</a>
+                        <a href="/cosmetics/cloaks" class="dropdown-item"><i class="fas fa-user-tie"></i>Pelerinler</a>
+                        <a href="/cosmetics/hats" class="dropdown-item"><i class="fas fa-hat-wizard"></i>Şapkalar</a>
+                    </div>
+                </li>
+                
+                <li class="user-menu">
+                    <div class="server-status">
+                        <div class="status-dot"></div>
+                        <span id="player-count">Oyuncu: 0/100</span>
+                    </div>
+                    
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <div class="dropdown">
+                            <a href="#" class="nav-link">
+                                <img src="/images/default-avatar.png" alt="<%= user.username %>" class="user-avatar">
+                                <%= user.username %>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i>Panel</a>
+                                <a href="/profile/<%= user.username %>" class="dropdown-item"><i class="fas fa-user"></i>Profil</a>
+                                <a href="/purchases" class="dropdown-item"><i class="fas fa-shopping-cart"></i>Satın Alımlar</a>
+                                <hr>
+                                <a href="/logout" class="dropdown-item text-red"><i class="fas fa-sign-out-alt"></i>Çıkış Yap</a>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-secondary">Giriş Yap</a>
+                        <a href="/register" class="btn btn-primary">Kayıt Ol</a>
+                    <% } %>
+                </li>
+            </ul>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <img src="/images/minecraft-bg.jpg" alt="Minecraft Background" class="hero-bg" onerror="this.style.display='none'">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Türkiye'nin <span class="text-green">En İyi</span><br>
+                    Minecraft Sunucusu
+                </h1>
+                <p class="hero-subtitle">
+                    Binlerce oyuncu ile BedWars, SkyWars, Survival ve daha fazlası! 
+                    Hemen katıl ve eğlenceye başla!
+                </p>
+                
+                <div class="server-ip">
+                    <div>
+                        <i class="fas fa-server text-green"></i>
+                        <span class="ip-text">play.minecrafttr.com</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyIP()">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <div class="bg-gray-800 bg-opacity-80 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                            <span class="text-white font-medium" id="hero-player-count">
-                                <%= serverStats.online_players %>/<%= serverStats.max_players %> Oyuncu
-                            </span>
-                        </div>
-                    </div>
+                <div class="hero-actions">
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <a href="/dashboard" class="btn btn-primary btn-lg">
+                            <i class="fas fa-tachometer-alt"></i>Panele Git
+                        </a>
+                    <% } else { %>
+                        <a href="/register" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus"></i>Hemen Kayıt Ol
+                        </a>
+                    <% } %>
+                    <a href="/market" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-shopping-bag"></i>Marketi Keşfet
+                    </a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" data-count="15000">0</div>
+                    <div class="stat-label">Kayıtlı Oyuncu</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-count="<%= serverStats.online_players %>">0</div>
+                    <div class="stat-label">Aktif Oyuncu</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-count="7">0</div>
+                    <div class="stat-label">Farklı Oyun</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-count="99.9">0</div>
+                    <div class="stat-label">Uptime %</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Neden <span class="text-green">MinecraftTR</span>?</h2>
+            <p class="section-subtitle">
+                Türkiye'nin en gelişmiş Minecraft sunucusunda sizi bekleyen özellikler
+            </p>
             
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <% if (typeof user !== 'undefined' && user) { %>
-                    <a href="/dashboard" class="btn-primary btn-lg">
-                        <i class="fas fa-tachometer-alt mr-2"></i>
-                        Panele Git
-                    </a>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon bedwars">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <h3 class="feature-title">BedWars</h3>
+                    <p class="feature-description">
+                        Arkadaşlarınla takım kurarak düşman yataklarını yok et ve kendi yatağını savun!
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon skywars">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3 class="feature-title">SkyWars</h3>
+                    <p class="feature-description">
+                        Gökyüzündeki adalarda hayatta kalma mücadelesi ver ve son kalan olmaya çalış!
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon survival">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <h3 class="feature-title">Survival</h3>
+                    <p class="feature-description">
+                        Kendi dünyını inşa et, kaynak topla ve diğer oyuncularla ticaret yap!
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon skyblock">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3 class="feature-title">SkyBlock</h3>
+                    <p class="feature-description">
+                        Küçük bir adada başla ve onu büyük bir imparatorluğa dönüştür!
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon prison">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="feature-title">Prison</h3>
+                    <p class="feature-description">
+                        Hapishaneden kaçmaya çalış, rankını yükselt ve özgürlüğünü kazan!
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon cosmetics">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="feature-title">Kozmetikler</h3>
+                    <p class="feature-description">
+                        Karakterini özelleştir, parçacık efektleri ve evcil hayvanlarla öne çık!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest News Section -->
+    <section class="news-section">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h2 class="section-title text-left">Son Haberler</h2>
+                    <p class="section-subtitle text-left">Sunucudaki en son gelişmelerden haberdar ol</p>
+                </div>
+                <a href="/news" class="btn btn-secondary">
+                    Tüm Haberler <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="news-grid">
+                <% if (news && news.length > 0) { %>
+                    <% news.slice(0, 3).forEach(function(article) { %>
+                        <div class="news-card">
+                            <div class="news-image">
+                                <img src="<%= article.image || '/images/default-news.jpg' %>" 
+                                     alt="<%= article.title %>" 
+                                     onerror="this.style.display='none'">
+                                <div class="news-badge">
+                                    <%= article.category %>
+                                </div>
+                            </div>
+                            <div class="news-content">
+                                <h3 class="news-title">
+                                    <%= article.title %>
+                                </h3>
+                                <p class="news-excerpt">
+                                    <%= article.content.substring(0, 150) %>...
+                                </p>
+                                <div class="news-meta">
+                                    <div>
+                                        <i class="fas fa-user"></i>
+                                        <%= article.author %>
+                                    </div>
+                                    <div>
+                                        <%= new Date(article.created_at).toLocaleDateString('tr-TR') %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
                 <% } else { %>
-                    <a href="/register" class="btn-primary btn-lg">
-                        <i class="fas fa-user-plus mr-2"></i>
-                        Hemen Kayıt Ol
-                    </a>
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 0;">
+                        <i class="fas fa-newspaper" style="font-size: 4rem; color: #6b7280; margin-bottom: 20px;"></i>
+                        <p style="color: #9ca3af; font-size: 1.1rem;">Henüz haber bulunmuyor.</p>
+                    </div>
                 <% } %>
-                <a href="/market" class="btn-secondary btn-lg">
-                    <i class="fas fa-shopping-bag mr-2"></i>
-                    Marketi Keşfet
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Donators Section -->
+    <section class="donors-section">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h2 class="section-title text-left">En Çok Para Yükleyenler</h2>
+                    <p class="section-subtitle text-left">Sunucumuzu destekleyen değerli oyuncularımız</p>
+                </div>
+                <a href="/toplist" class="btn btn-secondary">
+                    Tam Liste <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="donors-grid">
+                <% if (topDonators && topDonators.length > 0) { %>
+                    <% topDonators.slice(0, 5).forEach(function(donator, index) { %>
+                        <div class="donor-card <%= index < 3 ? 'featured' : '' %>">
+                            <div class="donor-rank">
+                                #<%= index + 1 %>
+                            </div>
+                            <div class="donor-avatar">
+                                <img src="https://crafatar.com/avatars/<%= donator.username %>?size=64" 
+                                     alt="<%= donator.username %>"
+                                     onerror="this.src='/images/default-avatar.png'">
+                            </div>
+                            <h3 class="donor-name"><%= donator.username %></h3>
+                            <p class="donor-amount">
+                                <%= Math.round(donator.total_amount) %> TL
+                            </p>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 0;">
+                        <i class="fas fa-coins" style="font-size: 4rem; color: #6b7280; margin-bottom: 20px;"></i>
+                        <p style="color: #9ca3af; font-size: 1.1rem;">Henüz bağış bulunmuyor.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Discord Section -->
+    <section style="background: linear-gradient(135deg, #5865f2, #7289da); padding: 80px 0;">
+        <div class="container">
+            <div class="text-center">
+                <div style="background: rgba(255,255,255,0.2); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px;">
+                    <i class="fab fa-discord" style="font-size: 2.5rem; color: white;"></i>
+                </div>
+                <h2 style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 20px;">
+                    Discord Sunucumuza Katıl
+                </h2>
+                <p style="font-size: 1.2rem; color: rgba(255,255,255,0.9); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Binlerce oyuncu ile sohbet et, etkinliklere katıl ve sunucu hakkında güncel bilgileri al!
+                </p>
+                <a href="#" class="btn btn-lg" style="background: white; color: #5865f2;">
+                    <i class="fab fa-discord"></i>Discord'a Katıl
                 </a>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- Features Section -->
-<div class="py-16 bg-gray-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Neden <span class="text-green-400">MinecraftTR</span>?
-            </h2>
-            <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-                Türkiye'nin en gelişmiş Minecraft sunucusunda sizi bekleyen özellikler
-            </p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Feature 1 -->
-            <div class="feature-card">
-                <div class="feature-icon bg-red-500">
-                    <i class="fas fa-bed text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">BedWars</h3>
-                <p class="text-gray-300">
-                    Arkadaşlarınla takım kurarak düşman yataklarını yok et ve kendi yatağını savun!
-                </p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="feature-card">
-                <div class="feature-icon bg-blue-500">
-                    <i class="fas fa-cloud text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">SkyWars</h3>
-                <p class="text-gray-300">
-                    Gökyüzündeki adalarda hayatta kalma mücadelesi ver ve son kalan olmaya çalış!
-                </p>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="feature-card">
-                <div class="feature-icon bg-green-500">
-                    <i class="fas fa-tree text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">Survival</h3>
-                <p class="text-gray-300">
-                    Kendi dünyını inşa et, kaynak topla ve diğer oyuncularla ticaret yap!
-                </p>
-            </div>
-            
-            <!-- Feature 4 -->
-            <div class="feature-card">
-                <div class="feature-icon bg-purple-500">
-                    <i class="fas fa-cube text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">SkyBlock</h3>
-                <p class="text-gray-300">
-                    Küçük bir adada başla ve onu büyük bir imparatorluğa dönüştür!
-                </p>
-            </div>
-            
-            <!-- Feature 5 -->
-            <div class="feature-card">
-                <div class="feature-icon bg-orange-500">
-                    <i class="fas fa-lock text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">Prison</h3>
-                <p class="text-gray-300">
-                    Hapishaneden kaçmaya çalış, rankını yükselt ve özgürlüğünü kazan!
-                </p>
-            </div>
-            
-            <!-- Feature 6 -->
-            <div class="feature-card">
-                <div class="feature-icon bg-pink-500">
-                    <i class="fas fa-star text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-3">Kozmetikler</h3>
-                <p class="text-gray-300">
-                    Karakterini özelleştir, parçacık efektleri ve evcil hayvanlarla öne çık!
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Stats Section -->
-<div class="py-16 bg-gray-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="text-center">
-                <div class="text-3xl md:text-4xl font-bold text-green-400 mb-2" data-count="15000">0</div>
-                <div class="text-gray-300 font-medium">Kayıtlı Oyuncu</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl md:text-4xl font-bold text-blue-400 mb-2" data-count="<%= serverStats.online_players %>">0</div>
-                <div class="text-gray-300 font-medium">Aktif Oyuncu</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl md:text-4xl font-bold text-purple-400 mb-2" data-count="7">0</div>
-                <div class="text-gray-300 font-medium">Farklı Oyun</div>
-            </div>
-            <div class="text-center">
-                <div class="text-3xl md:text-4xl font-bold text-yellow-400 mb-2" data-count="99.9">0</div>
-                <div class="text-gray-300 font-medium">Uptime %</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Latest News Section -->
-<div class="py-16 bg-gray-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center mb-12">
-            <div>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Son Haberler</h2>
-                <p class="text-gray-300 text-lg">Sunucudaki en son gelişmelerden haberdar ol</p>
-            </div>
-            <a href="/news" class="btn-secondary">
-                Tüm Haberler <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <% if (news && news.length > 0) { %>
-                <% news.slice(0, 3).forEach(function(article) { %>
-                    <div class="news-card">
-                        <div class="news-image">
-                            <img src="<%= article.image || '/images/default-news.jpg' %>" 
-                                 alt="<%= article.title %>" 
-                                 class="w-full h-48 object-cover">
-                            <div class="news-category">
-                                <%= article.category %>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold text-white mb-3 line-clamp-2">
-                                <%= article.title %>
-                            </h3>
-                            <p class="text-gray-300 mb-4 line-clamp-3">
-                                <%= article.content.substring(0, 150) %>...
-                            </p>
-                            <div class="flex justify-between items-center">
-                                <div class="text-sm text-gray-400">
-                                    <i class="fas fa-user mr-1"></i>
-                                    <%= article.author %>
-                                </div>
-                                <div class="text-sm text-gray-400">
-                                    <%= new Date(article.created_at).toLocaleDateString('tr-TR') %>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-brand">
+                        <img src="/images/logo.png" alt="MinecraftTR" onerror="this.style.display='none'">
+                        <span>MinecraftTR</span>
                     </div>
-                <% }); %>
-            <% } else { %>
-                <div class="col-span-3 text-center py-12">
-                    <i class="fas fa-newspaper text-gray-600 text-6xl mb-4"></i>
-                    <p class="text-gray-400 text-lg">Henüz haber bulunmuyor.</p>
-                </div>
-            <% } %>
-        </div>
-    </div>
-</div>
-
-<!-- Top Donators Section -->
-<div class="py-16 bg-gray-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center mb-12">
-            <div>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">En Çok Para Yükleyenler</h2>
-                <p class="text-gray-300 text-lg">Sunucumuzu destekleyen değerli oyuncularımız</p>
-            </div>
-            <a href="/toplist" class="btn-secondary">
-                Tam Liste <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <% if (topDonators && topDonators.length > 0) { %>
-                <% topDonators.slice(0, 5).forEach(function(donator, index) { %>
-                    <div class="donator-card <%= index < 3 ? 'featured' : '' %>">
-                        <div class="donator-rank">
-                            #<%= index + 1 %>
-                        </div>
-                        <div class="donator-avatar">
-                            <img src="https://crafatar.com/avatars/<%= donator.username %>?size=64" 
-                                 alt="<%= donator.username %>"
-                                 onerror="this.src='/images/default-avatar.png'">
-                        </div>
-                        <h3 class="text-white font-bold mb-1"><%= donator.username %></h3>
-                        <p class="text-green-400 font-semibold">
-                            <%= Math.round(donator.total_amount) %> TL
-                        </p>
+                    <p class="footer-description">
+                        Türkiye'nin en büyük ve en kaliteli Minecraft sunucusu. 
+                        Binlerce oyuncu ile eğlenceli vakit geçirin!
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                     </div>
-                <% }); %>
-            <% } else { %>
-                <div class="col-span-5 text-center py-12">
-                    <i class="fas fa-coins text-gray-600 text-6xl mb-4"></i>
-                    <p class="text-gray-400 text-lg">Henüz bağış bulunmuyor.</p>
                 </div>
-            <% } %>
-        </div>
-    </div>
-</div>
-
-<!-- Join Discord Section -->
-<div class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="flex justify-center mb-6">
-            <div class="bg-white bg-opacity-20 p-4 rounded-full">
-                <i class="fab fa-discord text-white text-4xl"></i>
+                
+                <div>
+                    <h3 class="footer-title">Hızlı Bağlantılar</h3>
+                    <ul class="footer-links">
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/rules">Kurallar</a></li>
+                        <li><a href="/support">Destek</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Sunucu Bilgileri</h3>
+                    <ul class="footer-links">
+                        <li>IP: <span class="text-green">play.minecrafttr.com</span></li>
+                        <li>Port: <span class="text-green">25565</span></li>
+                        <li>Version: <span class="text-green">1.8 - 1.21</span></li>
+                        <li>Cracked: <span class="text-green">Desteklenir</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p style="color: #9ca3af;">
+                    © 2024 MinecraftTR. Tüm hakları saklıdır.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="/privacy">Gizlilik Politikası</a>
+                    <a href="/terms">Kullanım Şartları</a>
+                </div>
             </div>
         </div>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-            Discord Sunucumuza Katıl
-        </h2>
-        <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
-            Binlerce oyuncu ile sohbet et, etkinliklere katıl ve sunucu hakkında güncel bilgileri al!
-        </p>
-        <a href="#" class="btn-primary btn-lg bg-white text-indigo-600 hover:bg-gray-100">
-            <i class="fab fa-discord mr-2"></i>
-            Discord'a Katıl
-        </a>
-    </div>
-</div>
+    </footer>
 
-<!-- Copy IP Function -->
-<script>
-function copyIP() {
-    const ip = 'play.minecrafttr.com';
-    navigator.clipboard.writeText(ip).then(function() {
-        // Show success message
-        const toast = document.createElement('div');
-        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-        toast.innerHTML = '<i class="fas fa-check mr-2"></i>IP kopyalandı!';
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    });
-}
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const nav = document.getElementById('navbar-nav');
+            nav.classList.toggle('active');
+        }
 
-// Animate numbers
-function animateNumbers() {
-    const counters = document.querySelectorAll('[data-count]');
-    counters.forEach(counter => {
-        const target = parseFloat(counter.getAttribute('data-count'));
-        let current = 0;
-        const increment = target / 100;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                current = target;
-                clearInterval(timer);
-            }
-            counter.textContent = target % 1 === 0 ? Math.floor(current) : current.toFixed(1);
-        }, 20);
-    });
-}
+        // Copy IP function
+        function copyIP() {
+            const ip = 'play.minecrafttr.com';
+            navigator.clipboard.writeText(ip).then(function() {
+                // Show success message
+                const toast = document.createElement('div');
+                toast.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+                toast.innerHTML = '<i class="fas fa-check" style="margin-right: 8px;"></i>IP kopyalandı!';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            });
+        }
 
-// Start animation when page loads
-document.addEventListener('DOMContentLoaded', animateNumbers);
-</script>
+        // Animate numbers
+        function animateNumbers() {
+            const counters = document.querySelectorAll('[data-count]');
+            counters.forEach(counter => {
+                const target = parseFloat(counter.getAttribute('data-count'));
+                let current = 0;
+                const increment = target / 100;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = target % 1 === 0 ? Math.floor(current) : current.toFixed(1);
+                }, 20);
+            });
+        }
+
+        // Update player count
+        function updatePlayerCount() {
+            fetch('/api/server/stats')
+                .then(response => response.json())
+                .then(data => {
+                    const element = document.getElementById('player-count');
+                    if (element) {
+                        element.textContent = `Oyuncu: ${data.online_players}/${data.max_players}`;
+                    }
+                })
+                .catch(console.error);
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            animateNumbers();
+            updatePlayerCount();
+            setInterval(updatePlayerCount, 30000);
+        });
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'slideInUp 0.6s ease-out';
+                }
+            });
+        });
+
+        // Observe elements for animations
+        document.querySelectorAll('.feature-card, .news-card, .donor-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -485,6 +485,7 @@ ADMIN_EMAIL={$config['admin_email']}";
                     <li>✅ Klasör yapısı oluşturuldu</li>
                     <li>✅ Örnek veriler eklendi</li>
                     <li>✅ AuthMe entegrasyonu hazırlandı</li>
+                    <li>✅ Modern CSS tasarım dosyası hazırlandı</li>
                 </ul>
                 
                 <h3>🚀 Sonraki Adımlar:</h3>
@@ -504,7 +505,20 @@ npm start
                     <li>📁 <code>public/images/</code> klasörüne logo ve görselleri ekleyin</li>
                     <li>⚙️ <code>.env</code> dosyasını gerektiğinde düzenleyin</li>
                     <li>🎮 AuthMe plugin ayarlarını website ile eşleyin</li>
+                    <li>🎨 <code>public/css/style.css</code> dosyasını özelleştirin</li>
                 </ul>
+                
+                <div class="card info">
+                    <h3>🆕 Yeni Tasarım Özellikleri:</h3>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li>✅ Modern Minecraft temalı tasarım</li>
+                        <li>✅ Responsive (mobil uyumlu) layout</li>
+                        <li>✅ Smooth animasyonlar ve hover efektleri</li>
+                        <li>✅ Dark theme ve gradient renkler</li>
+                        <li>✅ Font Awesome icon desteği</li>
+                        <li>✅ Custom CSS (Tailwind'siz)</li>
+                    </ul>
+                </div>
                 
                 <div style="text-align: center; margin-top: 30px;">
                     <a href="http://localhost/phpmyadmin" class="btn btn-secondary" target="_blank">
