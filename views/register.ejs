@@ -1,337 +1,465 @@
-<%- include('layout', { body: '', title: 'Kayıt Ol' }) %>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - MinecraftTR</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-cube"></i>
+                MinecraftTR
+            </a>
+            
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i> Market</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i> Sıralama</a></li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i> Haberler</a></li>
+                <li class="dropdown">
+                    <a href="/games" class="nav-link"><i class="fas fa-gamepad"></i> Oyunlar</a>
+                    <div class="dropdown-menu">
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i> Survival</a>
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i> BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i> SkyWars</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i> Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-mountain"></i> SkyBlock</a>
+                    </div>
+                </li>
+                <li><a href="/login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Giriş</a></li>
+                <li><a href="/register" class="nav-link btn-primary active"><i class="fas fa-user-plus"></i> Kayıt</a></li>
+            </ul>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
 
-<div class="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div class="text-center">
-            <div class="flex justify-center mb-6">
-                <div class="bg-blue-500 p-4 rounded-full">
-                    <i class="fas fa-user-plus text-white text-3xl"></i>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-user-plus"></i>
+                Kayıt Ol
+            </h1>
+            <p class="page-subtitle">MinecraftTR ailesine katıl ve eğlenceye başla!</p>
+        </div>
+    </div>
+
+    <!-- Register Section -->
+    <div class="auth-section" style="padding-top: 60px;">
+        <div class="auth-container">
+            <!-- Register Card -->
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h1>Hesap Oluştur</h1>
+                    <p>Zaten hesabın var mı? <a href="/login">Giriş yap</a></p>
+                </div>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <form class="auth-form" action="/register" method="POST" id="registerForm">
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i>
+                            Minecraft Kullanıcı Adı
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Minecraft kullanıcı adın"
+                            required
+                            minlength="3"
+                            maxlength="16"
+                            pattern="[a-zA-Z0-9_]+"
+                            autocomplete="username"
+                        >
+                        <small class="form-help">3-16 karakter, sadece harf, rakam ve _ kullanılabilir</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            E-posta Adresi
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="ornek@email.com"
+                            required
+                            autocomplete="email"
+                        >
+                        <small class="form-help">Şifre sıfırlama için gereklidir</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Şifre
+                        </label>
+                        <div class="password-input">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Güçlü bir şifre seçin"
+                                required
+                                minlength="6"
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength" id="passwordStrength"></div>
+                        <small class="form-help">En az 6 karakter olmalıdır</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            <i class="fas fa-lock"></i>
+                            Şifre Tekrarı
+                        </label>
+                        <div class="password-input">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Şifrenizi tekrar girin"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-match" id="passwordMatch"></div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" required>
+                            <span class="checkmark"></span>
+                            <a href="/terms" target="_blank">Kullanım şartlarını</a> ve <a href="/privacy" target="_blank">gizlilik politikasını</a> kabul ediyorum
+                        </label>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="newsletter">
+                            <span class="checkmark"></span>
+                            Sunucu güncellemeleri hakkında e-posta almak istiyorum
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Hesap Oluştur
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <div class="divider">
+                        <span>veya</span>
+                    </div>
+                    
+                    <div class="register-link">
+                        <p>Zaten hesabın var mı? <a href="/login">Hemen giriş yap!</a></p>
+                    </div>
+
+                    <div class="server-info">
+                        <div class="server-ip-display">
+                            <i class="fas fa-server"></i>
+                            <span>play.minecrafttr.com</span>
+                            <button onclick="copyIP()" title="IP'yi Kopyala">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="server-description">Kayıt olduktan sonra sunucuya katıl!</p>
+                    </div>
                 </div>
             </div>
-            <h2 class="text-3xl font-extrabold text-white">
-                Hesap Oluştur
-            </h2>
-            <p class="mt-2 text-gray-300">
-                MinecraftTR sunucusuna katıl! Zaten hesabın var mı? 
-                <a href="/login" class="text-blue-400 hover:text-blue-300 font-medium">
-                    giriş yap
-                </a>
-            </p>
-        </div>
-        
-        <form class="mt-8 space-y-6" action="/register" method="POST" onsubmit="return validateForm()">
-            <div class="rounded-md shadow-sm space-y-4">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
-                        Kullanıcı Adı <span class="text-red-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-user text-gray-400"></i>
-                        </div>
-                        <input id="username" name="username" type="text" required 
-                               class="auth-input pl-10" 
-                               placeholder="Minecraft kullanıcı adın"
-                               minlength="3" maxlength="16"
-                               pattern="[a-zA-Z0-9_]+"
-                               title="Kullanıcı adı sadece harf, rakam ve alt çizgi içerebilir">
-                    </div>
-                    <p class="mt-1 text-xs text-gray-400">
-                        3-16 karakter, sadece harf, rakam ve alt çizgi
-                    </p>
-                </div>
-                
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
-                        E-posta Adresi <span class="text-red-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
-                        </div>
-                        <input id="email" name="email" type="email" required 
-                               class="auth-input pl-10" 
-                               placeholder="ornek@email.com">
-                    </div>
-                </div>
-                
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
-                        Şifre <span class="text-red-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
-                        </div>
-                        <input id="password" name="password" type="password" required 
-                               class="auth-input pl-10" 
-                               placeholder="Güçlü bir şifre seç"
-                               minlength="6"
-                               onkeyup="checkPasswordStrength()">
-                        <button type="button" onclick="togglePassword('password')" 
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <i class="fas fa-eye text-gray-400 hover:text-gray-300" id="password-toggle"></i>
-                        </button>
-                    </div>
-                    <div class="mt-2">
-                        <div class="flex items-center space-x-1">
-                            <div class="flex-1 h-2 bg-gray-700 rounded-full">
-                                <div id="password-strength-bar" class="h-2 rounded-full transition-all duration-300"></div>
+
+            <!-- Info Panel -->
+            <div class="auth-info">
+                <div class="info-content">
+                    <h2>
+                        <i class="fas fa-rocket"></i>
+                        Maceraya Başla!
+                    </h2>
+                    <p>MinecraftTR'de seni bekleyen sonsuz maceralar var! Kayıt ol ve hemen başla.</p>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-gift"></i>
+                            <div>
+                                <h4>Yeni Üye Bonusu</h4>
+                                <p>Kayıt olur olmaz 1000 coin hediye!</p>
                             </div>
-                            <span id="password-strength-text" class="text-xs text-gray-400">Zayıf</span>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <h4>Topluluk</h4>
+                                <p>15,000+ aktif oyuncu ile tanış</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <i class="fas fa-crown"></i>
+                            <div>
+                                <h4>Rütbe Sistemi</h4>
+                                <p>Oynayarak üst rütbelere çık</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div>
+                                <h4>Etkinlikler</h4>
+                                <p>Düzenli turnuva ve etkinlikler</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div>
-                    <label for="confirm-password" class="block text-sm font-medium text-gray-300 mb-2">
-                        Şifre Tekrarı <span class="text-red-400">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
+
+                    <div class="registration-steps">
+                        <h3><i class="fas fa-list-ol"></i> Nasıl Başlarım?</h3>
+                        <div class="step-item">
+                            <span class="step-number">1</span>
+                            <div>
+                                <h4>Kayıt Ol</h4>
+                                <p>Formu doldur ve hesabını oluştur</p>
+                            </div>
                         </div>
-                        <input id="confirm-password" name="confirm-password" type="password" required 
-                               class="auth-input pl-10" 
-                               placeholder="Şifreni tekrar gir"
-                               onkeyup="checkPasswordMatch()">
-                        <button type="button" onclick="togglePassword('confirm-password')" 
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <i class="fas fa-eye text-gray-400 hover:text-gray-300" id="confirm-password-toggle"></i>
-                        </button>
+                        <div class="step-item">
+                            <span class="step-number">2</span>
+                            <div>
+                                <h4>Sunucuya Katıl</h4>
+                                <p>Minecraft'ta play.minecrafttr.com adresini ekle</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-number">3</span>
+                            <div>
+                                <h4>Maceraya Başla</h4>
+                                <p>Oyun modunu seç ve eğlenmeye başla!</p>
+                            </div>
+                        </div>
                     </div>
-                    <div id="password-match-message" class="mt-1 text-xs"></div>
-                </div>
-            </div>
-
-            <% if (typeof error !== 'undefined' && error) { %>
-                <div class="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 px-4 py-3 rounded-lg">
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <span><%= error %></span>
-                    </div>
-                </div>
-            <% } %>
-
-            <div class="flex items-start">
-                <input id="terms" name="terms" type="checkbox" required
-                       class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-600 bg-gray-700 rounded mt-1">
-                <label for="terms" class="ml-2 block text-sm text-gray-300">
-                    <a href="/terms" class="text-blue-400 hover:text-blue-300">Kullanım Şartları</a> ve 
-                    <a href="/privacy" class="text-blue-400 hover:text-blue-300">Gizlilik Politikası</a>'nı 
-                    okudum ve kabul ediyorum. <span class="text-red-400">*</span>
-                </label>
-            </div>
-
-            <div class="flex items-start">
-                <input id="newsletter" name="newsletter" type="checkbox"
-                       class="h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-600 bg-gray-700 rounded mt-1">
-                <label for="newsletter" class="ml-2 block text-sm text-gray-300">
-                    Sunucu haberleri ve güncellemeler hakkında e-posta almak istiyorum
-                </label>
-            </div>
-
-            <div>
-                <button type="submit" id="register-btn" 
-                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <i class="fas fa-user-plus text-blue-300 group-hover:text-blue-200"></i>
-                    </span>
-                    Hesap Oluştur
-                </button>
-            </div>
-
-            <div class="text-center">
-                <p class="text-gray-300">
-                    Zaten hesabın var mı? 
-                    <a href="/login" class="text-blue-400 hover:text-blue-300 font-medium">
-                        Giriş yap
-                    </a>
-                </p>
-            </div>
-        </form>
-        
-        <!-- Game Information -->
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mt-8">
-            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
-                <i class="fas fa-question-circle text-green-400 mr-2"></i>
-                Kayıt Olduktan Sonra Ne Olacak?
-            </h3>
-            <div class="space-y-3 text-sm text-gray-300">
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">1.</span>
-                    <span>Web sitesinde hesabın oluşturulacak</span>
-                </div>
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">2.</span>
-                    <span>Oyunda aynı kullanıcı adı ve şifre ile giriş yapabileceksin</span>
-                </div>
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">3.</span>
-                    <span>Market'ten ürün satın alabilir, etkinliklere katılabilirsin</span>
-                </div>
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">4.</span>
-                    <span>Profil sayfanda istatistiklerini görüntüleyebilirsin</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Benefits -->
-        <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-white mb-4">
-                Üyelik Avantajları
-            </h3>
-            <div class="grid grid-cols-1 gap-3 text-sm text-white">
-                <div class="flex items-center">
-                    <i class="fas fa-gift mr-3 text-yellow-300"></i>
-                    <span>Ücretsiz başlangıç paketi</span>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-coins mr-3 text-yellow-300"></i>
-                    <span>Günlük giriş ödülleri</span>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-trophy mr-3 text-yellow-300"></i>
-                    <span>Özel etkinliklere katılım</span>
-                </div>
-                <div class="flex items-center">
-                    <i class="fas fa-chart-line mr-3 text-yellow-300"></i>
-                    <span>Detaylı istatistik takibi</span>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-function togglePassword(fieldId) {
-    const field = document.getElementById(fieldId);
-    const toggle = document.getElementById(fieldId + '-toggle');
-    
-    if (field.type === 'password') {
-        field.type = 'text';
-        toggle.classList.remove('fa-eye');
-        toggle.classList.add('fa-eye-slash');
-    } else {
-        field.type = 'password';
-        toggle.classList.remove('fa-eye-slash');
-        toggle.classList.add('fa-eye');
-    }
-}
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-cube"></i> MinecraftTR</h3>
+                    <p>Türkiye'nin en eğlenceli Minecraft sunucusu.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Bağlantılar</h4>
+                    <ul>
+                        <li><a href="/">Ana Sayfa</a></li>
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <p><i class="fas fa-envelope"></i> info@minecrafttr.com</p>
+                    <p><i class="fas fa-server"></i> play.minecrafttr.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 MinecraftTR. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
 
-function checkPasswordStrength() {
-    const password = document.getElementById('password').value;
-    const strengthBar = document.getElementById('password-strength-bar');
-    const strengthText = document.getElementById('password-strength-text');
-    
-    let strength = 0;
-    let strengthLabel = 'Çok Zayıf';
-    let strengthColor = 'bg-red-500';
-    
-    // Length check
-    if (password.length >= 6) strength += 1;
-    if (password.length >= 8) strength += 1;
-    
-    // Character type checks
-    if (/[a-z]/.test(password)) strength += 1;
-    if (/[A-Z]/.test(password)) strength += 1;
-    if (/[0-9]/.test(password)) strength += 1;
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-    
-    switch (strength) {
-        case 0:
-        case 1:
-            strengthLabel = 'Çok Zayıf';
-            strengthColor = 'bg-red-500';
-            break;
-        case 2:
-        case 3:
-            strengthLabel = 'Zayıf';
-            strengthColor = 'bg-orange-500';
-            break;
-        case 4:
-        case 5:
-            strengthLabel = 'Orta';
-            strengthColor = 'bg-yellow-500';
-            break;
-        case 6:
-            strengthLabel = 'Güçlü';
-            strengthColor = 'bg-green-500';
-            break;
-    }
-    
-    const percentage = Math.min((strength / 6) * 100, 100);
-    strengthBar.style.width = percentage + '%';
-    strengthBar.className = `h-2 rounded-full transition-all duration-300 ${strengthColor}`;
-    strengthText.textContent = strengthLabel;
-    strengthText.className = `text-xs ${strengthColor.replace('bg-', 'text-')}`;
-}
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script>
+        // Password toggle functionality
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.nextElementSibling;
+            const icon = toggle.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
 
-function checkPasswordMatch() {
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-    const message = document.getElementById('password-match-message');
-    
-    if (confirmPassword === '') {
-        message.textContent = '';
-        message.className = 'mt-1 text-xs';
-        return;
-    }
-    
-    if (password === confirmPassword) {
-        message.textContent = '✓ Şifreler eşleşiyor';
-        message.className = 'mt-1 text-xs text-green-400';
-    } else {
-        message.textContent = '✗ Şifreler eşleşmiyor';
-        message.className = 'mt-1 text-xs text-red-400';
-    }
-}
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let text = '';
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            switch (strength) {
+                case 0:
+                case 1:
+                    text = 'Çok zayıf';
+                    break;
+                case 2:
+                case 3:
+                    text = 'Zayıf';
+                    break;
+                case 4:
+                    text = 'Orta';
+                    break;
+                case 5:
+                    text = 'Güçlü';
+                    break;
+                case 6:
+                    text = 'Çok güçlü';
+                    break;
+            }
+            
+            return { strength, text };
+        }
 
-function validateForm() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-    const terms = document.getElementById('terms').checked;
-    
-    // Username validation
-    if (!/^[a-zA-Z0-9_]{3,16}$/.test(username)) {
-        alert('Kullanıcı adı 3-16 karakter uzunluğunda olmalı ve sadece harf, rakam ve alt çizgi içerebilir.');
-        return false;
-    }
-    
-    // Password validation
-    if (password.length < 6) {
-        alert('Şifre en az 6 karakter uzunluğunda olmalıdır.');
-        return false;
-    }
-    
-    // Password match validation
-    if (password !== confirmPassword) {
-        alert('Şifreler eşleşmiyor.');
-        return false;
-    }
-    
-    // Terms validation
-    if (!terms) {
-        alert('Kullanım şartlarını kabul etmelisiniz.');
-        return false;
-    }
-    
-    return true;
-}
+        // Password match checker
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirmPassword.length === 0) {
+                matchDiv.innerHTML = '';
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                matchDiv.innerHTML = '<span style="color: #10b981;"><i class="fas fa-check"></i> Şifreler eşleşiyor</span>';
+            } else {
+                matchDiv.innerHTML = '<span style="color: #ef4444;"><i class="fas fa-times"></i> Şifreler eşleşmiyor</span>';
+            }
+        }
 
-// Real-time validation
-document.getElementById('username').addEventListener('input', function() {
-    const username = this.value;
-    const button = document.getElementById('register-btn');
-    
-    if (username.length >= 3 && /^[a-zA-Z0-9_]*$/.test(username)) {
-        this.classList.remove('border-red-500');
-        this.classList.add('border-gray-600');
-    } else if (username.length > 0) {
-        this.classList.remove('border-gray-600');
-        this.classList.add('border-red-500');
-    }
-});
-</script>
+        // Username validation
+        function validateUsername(username) {
+            const regex = /^[a-zA-Z0-9_]{3,16}$/;
+            return regex.test(username);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const usernameInput = document.getElementById('username');
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            // Password strength indicator
+            passwordInput.addEventListener('input', function() {
+                const result = checkPasswordStrength(this.value);
+                const colors = ['#ef4444', '#f59e0b', '#10b981'];
+                const colorIndex = Math.min(Math.floor(result.strength / 2), 2);
+                
+                if (this.value.length > 0) {
+                    strengthDiv.innerHTML = `<span style="color: ${colors[colorIndex]};"><i class="fas fa-shield-alt"></i> ${result.text}</span>`;
+                } else {
+                    strengthDiv.innerHTML = '';
+                }
+                
+                checkPasswordMatch();
+            });
+            
+            // Confirm password match
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            
+            // Username validation
+            usernameInput.addEventListener('input', function() {
+                const isValid = validateUsername(this.value);
+                if (this.value.length > 0) {
+                    if (isValid) {
+                        this.style.borderColor = '#10b981';
+                    } else {
+                        this.style.borderColor = '#ef4444';
+                    }
+                } else {
+                    this.style.borderColor = '#4b5563';
+                }
+            });
+            
+            // Form validation
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                const username = usernameInput.value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const terms = document.querySelector('input[name="terms"]').checked;
+                
+                // Validation checks
+                if (!validateUsername(username)) {
+                    e.preventDefault();
+                    utils.showToast('Geçersiz kullanıcı adı! 3-16 karakter, sadece harf, rakam ve _ kullanılabilir.', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    e.preventDefault();
+                    utils.showToast('Şifre en az 6 karakter olmalıdır!', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    utils.showToast('Şifreler eşleşmiyor!', 'error');
+                    return;
+                }
+                
+                if (!terms) {
+                    e.preventDefault();
+                    utils.showToast('Kullanım şartlarını kabul etmelisiniz!', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Hesap Oluşturuluyor...';
+            });
+        });
+    </script>
+</body>
+</html>

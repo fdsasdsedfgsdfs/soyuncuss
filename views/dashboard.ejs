@@ -1,6 +1,64 @@
-<%- include('layout', { body: '', page: 'dashboard', title: 'Panel' }) %>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - MinecraftTR</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-cube"></i>
+                MinecraftTR
+            </a>
+            
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i> Market</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i> Sıralama</a></li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i> Haberler</a></li>
+                <li class="dropdown">
+                    <a href="/games" class="nav-link"><i class="fas fa-gamepad"></i> Oyunlar</a>
+                    <div class="dropdown-menu">
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i> Survival</a>
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i> BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i> SkyWars</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i> Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-mountain"></i> SkyBlock</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="/dashboard" class="nav-link active"><i class="fas fa-user"></i> <%= user.username %></a>
+                    <div class="dropdown-menu">
+                        <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Panel</a>
+                        <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> Profil</a>
+                        <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+                    </div>
+                </li>
+            </ul>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
 
-<div class="py-8 bg-gray-900 min-h-screen">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Kullanıcı Paneli
+            </h1>
+            <p class="page-subtitle">Hoş geldin <%= user.username %>! Hesap yönetim panelin</p>
+        </div>
+    </div>
+
+<div style="padding: 60px 20px; background: #111827; min-height: calc(100vh - 300px);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -243,16 +301,45 @@
     </div>
 </div>
 
-<style>
-.achievement-card {
-    @apply bg-gray-700 border border-gray-600 rounded-lg p-4 text-center;
-}
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-cube"></i> MinecraftTR</h3>
+                    <p>Türkiye'nin en eğlenceli Minecraft sunucusu.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Bağlantılar</h4>
+                    <ul>
+                        <li><a href="/">Ana Sayfa</a></li>
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <p><i class="fas fa-envelope"></i> info@minecrafttr.com</p>
+                    <p><i class="fas fa-server"></i> play.minecrafttr.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 MinecraftTR. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
 
-.achievement-card.locked {
-    @apply opacity-50;
-}
-
-.achievement-card.unlocked {
-    @apply bg-gradient-to-br from-yellow-900/20 to-gray-700 border-yellow-500;
-}
-</style>
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+</body>
+</html>
