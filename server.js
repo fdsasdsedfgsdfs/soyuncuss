@@ -101,6 +101,7 @@ async function createTables() {
       last_online TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       total_playtime INT DEFAULT 0,
       is_online BOOLEAN DEFAULT FALSE,
+      is_admin BOOLEAN DEFAULT FALSE,
       FOREIGN KEY (username) REFERENCES authme(username) ON DELETE CASCADE
     )`,
     
@@ -567,6 +568,134 @@ app.get('/news', async (req, res) => {
   }
 });
 
+// Game routes
+app.get('/games/:gamemode', (req, res) => {
+    const gamemode = req.params.gamemode;
+    const validGamemodes = ['bedwars', 'skywars', 'survival', 'prison', 'skyblock'];
+    
+    if (!validGamemodes.includes(gamemode)) {
+        return res.status(404).render('404');
+    }
+    
+    res.render('game', { 
+        gamemode, 
+        user: req.session.user 
+    });
+});
+
+// Admin middleware
+const isAdmin = (req, res, next) => {
+    if (!req.session.user || !req.session.user.is_admin) {
+        return res.status(403).render('404');
+    }
+    next();
+};
+
+// Admin routes
+app.get('/admin', isAdmin, async (req, res) => {
+    try {
+        // Get dashboard stats
+        const [userCount] = await db.execute('SELECT COUNT(*) as count FROM website_users');
+        const [newsCount] = await db.execute('SELECT COUNT(*) as count FROM news');
+        const [marketCount] = await db.execute('SELECT COUNT(*) as count FROM market_items');
+        const [donationSum] = await db.execute('SELECT SUM(amount) as total FROM donations');
+        
+        const stats = {
+            users: userCount[0].count,
+            news: newsCount[0].count,
+            marketItems: marketCount[0].count,
+            totalDonations: donationSum[0].total || 0
+        };
+        
+        res.render('admin/dashboard', { 
+            user: req.session.user,
+            stats 
+        });
+    } catch (error) {
+        console.error('Admin dashboard error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/admin/users', isAdmin, async (req, res) => {
+    try {
+        const [users] = await db.execute(`
+            SELECT w.*, a.regdate, a.lastlogin, a.isLogged 
+            FROM website_users w 
+            LEFT JOIN authme a ON w.username = a.username 
+            ORDER BY w.join_date DESC
+        `);
+        
+        res.render('admin/users', { 
+            user: req.session.user,
+            users 
+        });
+    } catch (error) {
+        console.error('Admin users error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/admin/news', isAdmin, async (req, res) => {
+    try {
+        const [news] = await db.execute('SELECT * FROM news ORDER BY created_at DESC');
+        
+        res.render('admin/news', { 
+            user: req.session.user,
+            news 
+        });
+    } catch (error) {
+        console.error('Admin news error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.post('/admin/news', isAdmin, async (req, res) => {
+    try {
+        const { title, content, category, is_featured } = req.body;
+        
+        await db.execute(
+            'INSERT INTO news (title, content, author, category, is_featured) VALUES (?, ?, ?, ?, ?)',
+            [title, content, req.session.user.username, category, is_featured ? 1 : 0]
+        );
+        
+        res.redirect('/admin/news');
+    } catch (error) {
+        console.error('Admin add news error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/admin/market', isAdmin, async (req, res) => {
+    try {
+        const [items] = await db.execute('SELECT * FROM market_items ORDER BY created_at DESC');
+        
+        res.render('admin/market', { 
+            user: req.session.user,
+            items 
+        });
+    } catch (error) {
+        console.error('Admin market error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+app.post('/admin/market', isAdmin, async (req, res) => {
+    try {
+        const { name, description, price, currency, category, command } = req.body;
+        
+        await db.execute(
+            'INSERT INTO market_items (name, description, price, currency, category, command) VALUES (?, ?, ?, ?, ?, ?)',
+            [name, description, price, currency, category, command]
+        );
+        
+        res.redirect('/admin/market');
+    } catch (error) {
+        console.error('Admin add market item error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
 app.get('/profile/:username', async (req, res) => {
   try {
     const username = req.params.username;
@@ -680,6 +809,17 @@ cron.schedule('*/5 * * * *', async () => {
   } catch (error) {
     console.error('Error updating server stats:', error);
   }
+});
+
+// 404 handler (must be before error handler but after all routes)
+app.use((req, res) => {
+  res.status(404).render('404');
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render('404');
 });
 
 // Initialize and start server

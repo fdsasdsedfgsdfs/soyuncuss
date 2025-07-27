@@ -252,6 +252,14 @@ if (!in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1', 'localhost'])) {
                 $conn->query("INSERT IGNORE INTO news (title, content, author, category, is_featured) VALUES 
                     ('Sunucuya Hoş Geldiniz!', 'Minecraft sunucumuz açıldı! Hemen giriş yapın ve maceraya başlayın.', 'Admin', 'Duyuru', 1)");
                 
+                // Admin kullanıcısı oluştur
+                $adminPassword = password_hash('admin123', PASSWORD_BCRYPT);
+                $conn->query("INSERT IGNORE INTO authme (username, realname, password, email, regdate, regip) VALUES 
+                    ('admin', 'admin', '$adminPassword', 'admin@minecrafttr.com', " . (time() * 1000) . ", '127.0.0.1')");
+                
+                $conn->query("INSERT IGNORE INTO website_users (username, email, rank_name, is_admin) VALUES 
+                    ('admin', 'admin@minecrafttr.com', 'Administrator', 1)");
+                
                 $conn->close();
                 return true;
             } catch (Exception $e) {
@@ -507,6 +515,16 @@ npm start
                     <li>🎮 AuthMe plugin ayarlarını website ile eşleyin</li>
                     <li>🎨 <code>public/css/style.css</code> dosyasını özelleştirin</li>
                 </ul>
+                
+                <div class="card info">
+                    <h3>👤 Admin Hesabı Oluşturuldu:</h3>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li><strong>Kullanıcı Adı:</strong> admin</li>
+                        <li><strong>Şifre:</strong> admin123</li>
+                        <li><strong>Panel:</strong> <a href="http://localhost:3000/admin" target="_blank">http://localhost:3000/admin</a></li>
+                        <li style="color: #f59e0b;">⚠️ Güvenlik için şifreyi değiştirmeyi unutmayın!</li>
+                    </ul>
+                </div>
                 
                 <div class="card info">
                     <h3>🆕 Yeni Tasarım Özellikleri:</h3>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Sayfa Bulunamadı | MinecraftTR</title>
+    <meta name="description" content="Aradığınız sayfa bulunamadı. MinecraftTR ana sayfasına dönün.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    
+    <!-- CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a, #7c3aed, #1d4ed8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="10" height="10" fill="%23ffffff" opacity="0.1"/><rect x="20" y="20" width="10" height="10" fill="%23ffffff" opacity="0.05"/><rect x="40" y="10" width="10" height="10" fill="%23ffffff" opacity="0.08"/><rect x="60" y="30" width="10" height="10" fill="%23ffffff" opacity="0.06"/><rect x="80" y="20" width="10" height="10" fill="%23ffffff" opacity="0.04"/></svg>');
+            background-size: 100px 100px;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(0px) translateX(-10px); }
+            75% { transform: translateY(20px) translateX(5px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+        
+        .error-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+            max-width: 600px;
+            padding: 40px;
+        }
+        
+        .error-number {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        .error-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .error-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        
+        .error-suggestions {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .suggestions-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .suggestions-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .suggestions-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestions-list a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .suggestions-list a:hover {
+            color: #ffffff;
+        }
+        
+        .minecraft-blocks {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #8B4513;
+            border: 3px solid #A0522D;
+            animation: rotate 10s infinite linear;
+        }
+        
+        .minecraft-blocks::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 10px;
+            height: 10px;
+            background: #654321;
+            box-shadow: 
+                15px 0 #654321,
+                0 15px #654321,
+                15px 15px #654321;
+        }
+        
+        .block-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .block-2 { top: 20%; right: 15%; animation-delay: -2s; }
+        .block-3 { bottom: 30%; left: 20%; animation-delay: -4s; }
+        .block-4 { bottom: 15%; right: 10%; animation-delay: -6s; }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(0.9); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .error-number {
+                font-size: 6rem;
+            }
+            
+            .error-title {
+                font-size: 2rem;
+            }
+            
+            .error-content {
+                padding: 20px;
+            }
+            
+            .error-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .minecraft-blocks {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="back-home">
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Ana Sayfa
+        </a>
+    </div>
+
+    <!-- Minecraft Blocks Animation -->
+    <div class="minecraft-blocks block-1"></div>
+    <div class="minecraft-blocks block-2"></div>
+    <div class="minecraft-blocks block-3"></div>
+    <div class="minecraft-blocks block-4"></div>
+
+    <div class="error-container">
+        <div class="error-content">
+            <div class="error-number">404</div>
+            
+            <h1 class="error-title">
+                Sayfa Bulunamadı!
+            </h1>
+            
+            <p class="error-subtitle">
+                Üzgünüz, aradığınız sayfa mevcut değil veya taşınmış olabilir. 
+                Belki de Creeper patlaması yüzünden kaybolmuştur! 💣
+            </p>
+            
+            <div class="error-actions">
+                <a href="/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home"></i> Ana Sayfaya Dön
+                </a>
+                <a href="/market" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-shopping-bag"></i> Marketi Keşfet
+                </a>
+                <button onclick="history.back()" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Geri Git
+                </button>
+            </div>
+            
+            <div class="error-suggestions">
+                <h3 class="suggestions-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Nereye Gitmek İstersiniz?
+                </h3>
+                
+                <ul class="suggestions-list">
+                    <li>
+                        <i class="fas fa-gamepad text-green"></i>
+                        <a href="/games/bedwars">BedWars</a> - En popüler oyun modumuz
+                    </li>
+                    <li>
+                        <i class="fas fa-shopping-cart text-blue"></i>
+                        <a href="/market">Market</a> - Harika ürünler seni bekliyor
+                    </li>
+                    <li>
+                        <i class="fas fa-newspaper text-yellow"></i>
+                        <a href="/news">Haberler</a> - En son güncellemeler
+                    </li>
+                    <li>
+                        <i class="fas fa-trophy text-red"></i>
+                        <a href="/toplist">Sıralama</a> - En iyi oyuncular
+                    </li>
+                    <li>
+                        <i class="fas fa-user text-green"></i>
+                        <a href="/register">Kayıt Ol</a> - Maceraya başla!
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Server IP -->
+            <div style="margin-top: 40px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <p style="color: #10b981; font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-server"></i> Sunucuya Bağlan
+                </p>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <span style="font-family: 'Courier New', monospace; font-size: 1.2rem; color: #ffffff; font-weight: 600;">
+                        play.minecrafttr.com
+                    </span>
+                    <button onclick="copyIP()" class="btn btn-primary" style="padding: 8px 16px;">
+                        <i class="fas fa-copy"></i> Kopyala
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Copy IP function
+        function copyIP() {
+            const ip = 'play.minecrafttr.com';
+            navigator.clipboard.writeText(ip).then(function() {
+                // Show success message
+                const toast = document.createElement('div');
+                toast.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 15px 25px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+                toast.innerHTML = '<i class="fas fa-check" style="margin-right: 8px;"></i>IP kopyalandı!';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            });
+        }
+
+        // Add some interactive effects
+        document.addEventListener('mousemove', function(e) {
+            const blocks = document.querySelectorAll('.minecraft-blocks');
+            blocks.forEach((block, index) => {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                
+                const moveX = (x - 50) * 0.1 * (index + 1);
+                const moveY = (y - 50) * 0.1 * (index + 1);
+                
+                block.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${Date.now() * 0.01 * (index + 1)}deg)`;
+            });
+        });
+
+        // Auto redirect after 30 seconds (optional)
+        setTimeout(() => {
+            if (confirm('Bu sayfada uzun süre kaldınız. Ana sayfaya yönlendirilmek ister misiniz?')) {
+                window.location.href = '/';
+            }
+        }, 30000);
+        
+        // Console easter egg
+        console.log(`
+🎮 MinecraftTR 404 Sayfası
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💀 Sayfa bulunamadı, ama sen buradayken...
+🎯 Konsolda biraz eğlenelim!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Minecraft komutları dene:
+- /tp home (Ana sayfaya git)
+- /gamemode creative (Hayal gücünü kullan)
+- /give diamond 64 (Elmas istiyoruz!)
+        `);
+        
+        // Console commands easter egg
+        window.tp = function(location) {
+            const locations = {
+                'home': '/',
+                'market': '/market',
+                'news': '/news',
+                'games': '/games/bedwars'
+            };
+            
+            if (locations[location]) {
+                console.log(`🚀 Teleporting to ${location}...`);
+                setTimeout(() => {
+                    window.location.href = locations[location];
+                }, 1000);
+            } else {
+                console.log('❌ Unknown location! Try: home, market, news, games');
+            }
+        };
+        
+        window.gamemode = function(mode) {
+            if (mode === 'creative') {
+                console.log('🎨 Creative mode activated! You can now create amazing things!');
+                document.body.style.cursor = 'crosshair';
+            } else {
+                console.log('🏃 Survival mode! Be careful of Creepers!');
+                document.body.style.cursor = 'default';
+            }
+        };
+        
+        window.give = function(item, amount) {
+            console.log(`✨ You received ${amount} ${item}(s)! (Well, not really... this is just a website 😄)`);
+        };
+    </script>
+</body>
+</html>
