@@ -1,0 +1,155 @@
+<%- include('layout', { body: '', title: 'Giriş Yap' }) %>
+
+<div class="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+            <div class="flex justify-center mb-6">
+                <div class="bg-green-500 p-4 rounded-full">
+                    <i class="fas fa-user text-white text-3xl"></i>
+                </div>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white">
+                Hesabına Giriş Yap
+            </h2>
+            <p class="mt-2 text-gray-300">
+                MinecraftTR sunucusuna hoş geldin! Hesabın yoksa 
+                <a href="/register" class="text-green-400 hover:text-green-300 font-medium">
+                    kayıt ol
+                </a>
+            </p>
+        </div>
+        
+        <form class="mt-8 space-y-6" action="/login" method="POST">
+            <div class="rounded-md shadow-sm space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
+                        Kullanıcı Adı
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input id="username" name="username" type="text" required 
+                               class="auth-input pl-10" 
+                               placeholder="Minecraft kullanıcı adın">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                        Şifre
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input id="password" name="password" type="password" required 
+                               class="auth-input pl-10" 
+                               placeholder="Şifren">
+                    </div>
+                </div>
+            </div>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 px-4 py-3 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span><%= error %></span>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember-me" name="remember-me" type="checkbox" 
+                           class="h-4 w-4 text-green-500 focus:ring-green-400 border-gray-600 bg-gray-700 rounded">
+                    <label for="remember-me" class="ml-2 block text-sm text-gray-300">
+                        Beni hatırla
+                    </label>
+                </div>
+
+                <div class="text-sm">
+                    <a href="/forgot-password" class="text-green-400 hover:text-green-300">
+                        Şifremi unuttum
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-sign-in-alt text-green-300 group-hover:text-green-200"></i>
+                    </span>
+                    Giriş Yap
+                </button>
+            </div>
+
+            <div class="text-center">
+                <p class="text-gray-300">
+                    Hesabın yok mu? 
+                    <a href="/register" class="text-green-400 hover:text-green-300 font-medium">
+                        Hemen kayıt ol
+                    </a>
+                </p>
+            </div>
+        </form>
+        
+        <!-- Game Information -->
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mt-8">
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                Oyuna Nasıl Bağlanırım?
+            </h3>
+            <div class="space-y-3 text-sm text-gray-300">
+                <div class="flex items-start">
+                    <span class="text-green-400 font-bold mr-2">1.</span>
+                    <span>Minecraft'ı aç ve "Multiplayer" seçeneğine tıkla</span>
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-400 font-bold mr-2">2.</span>
+                    <span>"Add Server" butonuna tıkla ve sunucu IP'sini gir:</span>
+                </div>
+                <div class="bg-gray-700 rounded px-3 py-2 font-mono text-green-400 text-center">
+                    play.minecrafttr.com
+                </div>
+                <div class="flex items-start">
+                    <span class="text-green-400 font-bold mr-2">3.</span>
+                    <span>Sunucuya bağlan ve oyunda /register komutu ile kayıt ol</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-white mb-4">
+                Seni Bekleyen Özellikler
+            </h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div class="flex items-center text-gray-300">
+                    <i class="fas fa-bed text-red-400 mr-2"></i>
+                    <span>BedWars</span>
+                </div>
+                <div class="flex items-center text-gray-300">
+                    <i class="fas fa-cloud text-blue-400 mr-2"></i>
+                    <span>SkyWars</span>
+                </div>
+                <div class="flex items-center text-gray-300">
+                    <i class="fas fa-tree text-green-400 mr-2"></i>
+                    <span>Survival</span>
+                </div>
+                <div class="flex items-center text-gray-300">
+                    <i class="fas fa-cube text-purple-400 mr-2"></i>
+                    <span>SkyBlock</span>
+                </div>
+                <div class="flex items-center text-gray-300">
+                    <i class="fas fa-lock text-orange-400 mr-2"></i>
+                    <span>Prison</span>
+                </div>
+                <div class="flex items-center text-gray-300">
+                    <i class="fas fa-star text-yellow-400 mr-2"></i>
+                    <span>Kozmetikler</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
