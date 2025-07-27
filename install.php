@@ -126,12 +126,17 @@ if (!in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1', 'localhost'])) {
             return $requirements;
         }
 
-        function createDatabase($host, $username, $password, $dbname) {
+        function createDatabase($host, $username, $password, $dbname, $reset = false) {
             try {
                 $conn = new mysqli($host, $username, $password);
                 
                 if ($conn->connect_error) {
                     throw new Exception("MySQL bağlantı hatası: " . $conn->connect_error);
+                }
+                
+                // Eğer reset flag'i varsa, önce veritabanını sil
+                if ($reset) {
+                    $conn->query("DROP DATABASE IF EXISTS `$dbname`");
                 }
                 
                 $sql = "CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
@@ -178,10 +183,17 @@ if (!in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1', 'localhost'])) {
                     `join_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `last_online` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `total_playtime` INT DEFAULT 0,
-                    `is_online` BOOLEAN DEFAULT FALSE
+                    `is_online` BOOLEAN DEFAULT FALSE,
+                    `is_admin` BOOLEAN DEFAULT FALSE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
                 
                 $conn->query($websiteUsersTable);
+                
+                // Mevcut tabloyu güncelle (is_admin kolonu eksikse ekle)
+                $checkColumn = $conn->query("SHOW COLUMNS FROM `website_users` LIKE 'is_admin'");
+                if ($checkColumn->num_rows == 0) {
+                    $conn->query("ALTER TABLE `website_users` ADD COLUMN `is_admin` BOOLEAN DEFAULT FALSE");
+                }
                 
                 // Market items tablosu
                 $marketTable = "
@@ -329,11 +341,14 @@ ADMIN_EMAIL={$config['admin_email']}";
                 case 'configure_database':
                     $_SESSION['config'] = $_POST;
                     
+                    $resetDb = isset($_POST['reset_database']) && $_POST['reset_database'] == '1';
+                    
                     $result = createDatabase(
                         $_POST['db_host'], 
                         $_POST['db_user'], 
                         $_POST['db_password'], 
-                        $_POST['db_name']
+                        $_POST['db_name'],
+                        $resetDb
                     );
                     
                     if ($result === true) {
@@ -401,8 +416,15 @@ ADMIN_EMAIL={$config['admin_email']}";
                 <?php if (isset($error)): ?>
                 <div class="card error">
                     <p>❌ Hata: <?= htmlspecialchars($error) ?></p>
+                    <?php if (strpos($error, 'is_admin') !== false): ?>
+                    <p><strong>💡 Çözüm:</strong> Aşağıdaki "Mevcut veritabanını sil ve yeniden oluştur" seçeneğini işaretleyin.</p>
+                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
+                
+                <div class="card info">
+                    <p><strong>ℹ️ Bilgi:</strong> Mevcut bir veritabanınız varsa ve güncellemeler gerekiyorsa, "Reset" seçeneğini kullanabilirsiniz.</p>
+                </div>
                 
                 <form method="POST">
                     <input type="hidden" name="action" value="configure_database">
@@ -425,6 +447,13 @@ ADMIN_EMAIL={$config['admin_email']}";
                     <div class="form-group">
                         <label>Database Adı:</label>
                         <input type="text" name="db_name" value="minecraft_server" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; color: #f59e0b;">
+                            <input type="checkbox" name="reset_database" value="1" style="width: auto;">
+                            Mevcut veritabanını sil ve yeniden oluştur (⚠️ Tüm veriler silinir!)
+                        </label>
                     </div>
                     
                     <button type="submit" class="btn">Veritabanını Oluştur</button>
