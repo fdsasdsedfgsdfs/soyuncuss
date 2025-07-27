@@ -2204,7 +2204,75 @@ body {
     }
     
     .feature-item {
-        padding: 12px;
-    }
+    padding: 12px;
+}
+
+/* Register page specific styles */
+.form-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+.password-strength,
+.password-match {
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+.registration-steps {
+    margin-top: 40px;
+}
+
+.registration-steps h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.step-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(10px);
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1.1rem;
+    min-width: 40px;
+}
+
+.step-item h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.step-item p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
 }
 }
