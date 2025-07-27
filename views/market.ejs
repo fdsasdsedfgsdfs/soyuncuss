@@ -1,0 +1,255 @@
+<%- include('layout', { body: '', page: 'market', title: 'Market' }) %>
+
+<div class="py-8 bg-gray-900 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                <i class="fas fa-shopping-bag text-green-400 mr-3"></i>
+                Market
+            </h1>
+            <p class="text-gray-300 text-lg max-w-2xl mx-auto">
+                Rütbeler, kitler, kozmetikler ve daha fazlası! Oyun deneyimini geliştirmek için ihtiyacın olan her şey burada.
+            </p>
+        </div>
+
+        <!-- User Balance (if logged in) -->
+        <% if (typeof user !== 'undefined' && user) { %>
+            <div class="bg-gray-800 rounded-lg p-6 mb-8 border border-gray-700">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="text-xl font-bold text-white mb-2">Hesap Bakiyesi</h3>
+                        <div class="flex space-x-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-coins text-yellow-400 mr-2"></i>
+                                <span class="text-white font-medium">Coin: </span>
+                                <span class="text-yellow-400 font-bold ml-1" id="user-coins">0</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-gem text-purple-400 mr-2"></i>
+                                <span class="text-white font-medium">Token: </span>
+                                <span class="text-purple-400 font-bold ml-1" id="user-tokens">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button class="btn-secondary">
+                            <i class="fas fa-plus mr-2"></i>Coin Satın Al
+                        </button>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus mr-2"></i>Token Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Category Filter -->
+        <div class="mb-8">
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="/market?category=all" 
+                   class="category-btn <%= currentCategory === 'all' ? 'active' : '' %>">
+                    <i class="fas fa-th-large mr-2"></i>Tümü
+                </a>
+                <% if (categories && categories.length > 0) { %>
+                    <% categories.forEach(function(cat) { %>
+                        <a href="/market?category=<%= encodeURIComponent(cat.category) %>" 
+                           class="category-btn <%= currentCategory === cat.category ? 'active' : '' %>">
+                            <% if (cat.category === 'Rütbeler') { %>
+                                <i class="fas fa-crown mr-2"></i>
+                            <% } else if (cat.category === 'Kitler') { %>
+                                <i class="fas fa-box mr-2"></i>
+                            <% } else if (cat.category === 'Kozmetikler') { %>
+                                <i class="fas fa-star mr-2"></i>
+                            <% } else { %>
+                                <i class="fas fa-tag mr-2"></i>
+                            <% } %>
+                            <%= cat.category %>
+                        </a>
+                    <% }); %>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Items Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <% if (items && items.length > 0) { %>
+                <% items.forEach(function(item) { %>
+                    <div class="market-item-card" data-item-id="<%= item.id %>">
+                        <!-- Item Image -->
+                        <div class="item-image">
+                            <img src="<%= item.image || '/images/default-item.png' %>" 
+                                 alt="<%= item.name %>" 
+                                 class="w-full h-32 object-cover">
+                            <div class="item-category">
+                                <%= item.category %>
+                            </div>
+                        </div>
+                        
+                        <!-- Item Info -->
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold text-white mb-2 line-clamp-1">
+                                <%= item.name %>
+                            </h3>
+                            <p class="text-gray-300 text-sm mb-4 line-clamp-2">
+                                <%= item.description %>
+                            </p>
+                            
+                            <!-- Price -->
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="price-tag">
+                                    <% if (item.currency === 'coins') { %>
+                                        <i class="fas fa-coins text-yellow-400 mr-1"></i>
+                                        <span class="text-yellow-400 font-bold"><%= item.price %></span>
+                                    <% } else { %>
+                                        <i class="fas fa-gem text-purple-400 mr-1"></i>
+                                        <span class="text-purple-400 font-bold"><%= item.price %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <!-- Purchase Button -->
+                            <% if (typeof user !== 'undefined' && user) { %>
+                                <button onclick="purchaseItem(<%= item.id %>, '<%= item.name %>', <%= item.price %>, '<%= item.currency %>')" 
+                                        class="w-full btn-primary">
+                                    <i class="fas fa-shopping-cart mr-2"></i>
+                                    Satın Al
+                                </button>
+                            <% } else { %>
+                                <a href="/login" class="w-full btn-secondary text-center block">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>
+                                    Giriş Yap
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-span-full text-center py-16">
+                    <i class="fas fa-box-open text-gray-600 text-6xl mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-400 mb-2">Bu kategoride ürün bulunamadı</h3>
+                    <p class="text-gray-500">Farklı bir kategori deneyin veya daha sonra tekrar kontrol edin.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Purchase Confirmation Modal -->
+<div id="purchase-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="fas fa-shopping-cart text-green-400 text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Satın Alma Onayı</h3>
+            <p class="text-gray-300 mb-6" id="purchase-message">
+                Bu ürünü satın almak istediğinizden emin misiniz?
+            </p>
+            <div class="flex space-x-4">
+                <button onclick="closePurchaseModal()" class="flex-1 btn-secondary">
+                    İptal
+                </button>
+                <button onclick="confirmPurchase()" class="flex-1 btn-primary" id="confirm-purchase-btn">
+                    Satın Al
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success/Error Toast -->
+<div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 hidden">
+    <span id="toast-message"></span>
+</div>
+
+<script>
+let currentPurchase = null;
+
+function purchaseItem(itemId, itemName, price, currency) {
+    currentPurchase = { itemId, itemName, price, currency };
+    
+    const currencyIcon = currency === 'coins' ? 
+        '<i class="fas fa-coins text-yellow-400"></i>' : 
+        '<i class="fas fa-gem text-purple-400"></i>';
+    
+    document.getElementById('purchase-message').innerHTML = 
+        `<strong>${itemName}</strong> ürününü ${currencyIcon} <strong>${price} ${currency}</strong> karşılığında satın almak istediğinizden emin misiniz?`;
+    
+    document.getElementById('purchase-modal').classList.remove('hidden');
+    document.getElementById('purchase-modal').classList.add('flex');
+}
+
+function closePurchaseModal() {
+    document.getElementById('purchase-modal').classList.add('hidden');
+    document.getElementById('purchase-modal').classList.remove('flex');
+    currentPurchase = null;
+}
+
+async function confirmPurchase() {
+    if (!currentPurchase) return;
+    
+    const confirmBtn = document.getElementById('confirm-purchase-btn');
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Satın Alınıyor...';
+    
+    try {
+        const response = await fetch('/purchase', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                itemId: currentPurchase.itemId
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast(result.message, 'success');
+            closePurchaseModal();
+            // Update user balance if visible
+            updateUserBalance();
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (error) {
+        showToast('Satın alma sırasında bir hata oluştu!', 'error');
+    } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fas fa-shopping-cart mr-2"></i>Satın Al';
+    }
+}
+
+function showToast(message, type) {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    
+    toastMessage.innerHTML = message;
+    
+    if (type === 'success') {
+        toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 bg-green-500 text-white';
+    } else {
+        toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 bg-red-500 text-white';
+    }
+    
+    toast.classList.remove('hidden');
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 5000);
+}
+
+async function updateUserBalance() {
+    // This would fetch updated user balance and update the UI
+    // Implementation depends on your API structure
+}
+
+// Close modal when clicking outside
+document.getElementById('purchase-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePurchaseModal();
+    }
+});
+</script>

@@ -1,0 +1,371 @@
+/* Font Family */
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Custom Gradient Text */
+.text-gradient {
+    background: linear-gradient(45deg, #10b981, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Button Styles */
+.btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-md hover:shadow-lg;
+}
+
+.btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 border border-gray-600 text-sm font-medium rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200;
+}
+
+.btn-lg {
+    @apply px-8 py-4 text-base;
+}
+
+/* Navigation Styles */
+.nav-link {
+    @apply inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-200;
+}
+
+.nav-link.active {
+    @apply text-green-400 bg-gray-700;
+}
+
+.dropdown-link {
+    @apply block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200;
+}
+
+.mobile-nav-link {
+    @apply block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition-colors duration-200;
+}
+
+/* Footer Styles */
+.footer-link {
+    @apply text-gray-400 hover:text-white transition-colors duration-200;
+}
+
+/* Card Styles */
+.feature-card {
+    @apply bg-gray-800 border border-gray-700 rounded-lg p-6 text-center hover:border-gray-600 transition-colors duration-300;
+}
+
+.feature-icon {
+    @apply w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4;
+}
+
+.news-card {
+    @apply bg-gray-800 border border-gray-700 rounded-lg overflow-hidden hover:border-gray-600 transition-all duration-300 hover:shadow-xl;
+}
+
+.news-image {
+    @apply relative;
+}
+
+.news-category {
+    @apply absolute top-2 left-2 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded;
+}
+
+.donator-card {
+    @apply bg-gray-800 border border-gray-700 rounded-lg p-4 text-center hover:border-gray-600 transition-all duration-300 relative;
+}
+
+.donator-card.featured {
+    @apply border-yellow-500 bg-gradient-to-br from-yellow-900/20 to-gray-800;
+}
+
+.donator-rank {
+    @apply absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center;
+}
+
+.donator-avatar {
+    @apply w-12 h-12 mx-auto mb-2 rounded-lg overflow-hidden;
+}
+
+.donator-avatar img {
+    @apply w-full h-full object-cover;
+}
+
+/* Market Styles */
+.market-item-card {
+    @apply bg-gray-800 border border-gray-700 rounded-lg overflow-hidden hover:border-gray-600 transition-all duration-300 hover:shadow-xl;
+}
+
+.item-image {
+    @apply relative;
+}
+
+.item-category {
+    @apply absolute top-2 right-2 bg-purple-500 text-white text-xs font-medium px-2 py-1 rounded;
+}
+
+.price-tag {
+    @apply flex items-center bg-gray-700 px-3 py-1 rounded-lg;
+}
+
+.category-btn {
+    @apply inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 hover:text-white transition-all duration-200;
+}
+
+.category-btn.active {
+    @apply bg-green-600 border-green-600 text-white;
+}
+
+/* Form Styles */
+.auth-input {
+    @apply appearance-none relative block w-full px-3 py-3 border border-gray-600 placeholder-gray-400 text-white bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:z-10 transition-colors duration-200;
+}
+
+.auth-input:focus {
+    @apply bg-gray-600;
+}
+
+/* Line Clamp Utilities */
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in-right {
+    animation: slideInFromRight 0.6s ease-out;
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0,0,0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -30px, 0);
+    }
+    70% {
+        transform: translate3d(0, -15px, 0);
+    }
+    90% {
+        transform: translate3d(0, -4px, 0);
+    }
+}
+
+.bounce {
+    animation: bounce 1s ease infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Custom Background Patterns */
+.bg-pattern {
+    background-image: 
+        radial-gradient(circle at 25px 25px, rgba(255,255,255,.1) 2px, transparent 0),
+        radial-gradient(circle at 75px 75px, rgba(255,255,255,.1) 2px, transparent 0);
+    background-size: 100px 100px;
+}
+
+/* Glow Effects */
+.glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.glow-purple {
+    box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+/* Hover Effects */
+.hover-scale {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-lift {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    border: 3px solid #374151;
+    border-top: 3px solid #10b981;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Toast Notifications */
+.toast-enter {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.toast-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.toast-exit {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-exit-active {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 300ms, transform 300ms;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .feature-card {
+        @apply p-4;
+    }
+    
+    .news-card {
+        @apply text-sm;
+    }
+    
+    .market-item-card {
+        @apply text-sm;
+    }
+}
+
+/* Dark Mode Enhancements */
+.dark-glass {
+    background: rgba(31, 41, 55, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* Custom Utilities */
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bg-minecraft {
+    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-minecraft-dark {
+    background-image: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Status Indicators */
+.status-online {
+    @apply bg-green-400;
+}
+
+.status-offline {
+    @apply bg-red-400;
+}
+
+.status-maintenance {
+    @apply bg-yellow-400;
+}
+
+/* Premium Features */
+.premium-border {
+    background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+    padding: 2px;
+    border-radius: 8px;
+}
+
+.premium-content {
+    @apply bg-gray-800 rounded-md p-4;
+}
+
+/* Minecraft-specific styles */
+.minecraft-font {
+    font-family: 'Minecraft', 'Courier New', monospace;
+}
+
+.pixel-border {
+    border-style: solid;
+    border-width: 2px;
+    border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"><rect width="8" height="8" fill="%23444"/></svg>') 2;
+}
+
+/* Accessibility Improvements */
+.focus-visible:focus {
+    @apply outline-none ring-2 ring-green-500 ring-offset-2 ring-offset-gray-900;
+}
+
+/* Print Styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
