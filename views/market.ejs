@@ -1,43 +1,98 @@
-<%- include('layout', { body: '', page: 'market', title: 'Market' }) %>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market - MinecraftTR</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-cube"></i>
+                MinecraftTR
+            </a>
+            
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link active"><i class="fas fa-shopping-bag"></i> Market</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i> Sıralama</a></li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i> Haberler</a></li>
+                <li class="dropdown">
+                    <a href="/games" class="nav-link"><i class="fas fa-gamepad"></i> Oyunlar</a>
+                    <div class="dropdown-menu">
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i> Survival</a>
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i> BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i> SkyWars</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i> Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-mountain"></i> SkyBlock</a>
+                    </div>
+                </li>
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <li class="dropdown">
+                        <a href="/dashboard" class="nav-link"><i class="fas fa-user"></i> <%= user.username %></a>
+                        <div class="dropdown-menu">
+                            <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Panel</a>
+                            <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> Profil</a>
+                            <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+                        </div>
+                    </li>
+                <% } else { %>
+                    <li><a href="/login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Giriş</a></li>
+                    <li><a href="/register" class="nav-link btn-primary"><i class="fas fa-user-plus"></i> Kayıt</a></li>
+                <% } %>
+            </ul>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
 
-<div class="py-8 bg-gray-900 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-                <i class="fas fa-shopping-bag text-green-400 mr-3"></i>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-shopping-bag"></i>
                 Market
             </h1>
-            <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-                Rütbeler, kitler, kozmetikler ve daha fazlası! Oyun deneyimini geliştirmek için ihtiyacın olan her şey burada.
-            </p>
+            <p class="page-subtitle">Rütbeler, kitler, kozmetikler ve daha fazlası!</p>
         </div>
+    </div>
 
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 40px; margin-bottom: 80px;">
+        
         <!-- User Balance (if logged in) -->
         <% if (typeof user !== 'undefined' && user) { %>
-            <div class="bg-gray-800 rounded-lg p-6 mb-8 border border-gray-700">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-4 md:mb-0">
-                        <h3 class="text-xl font-bold text-white mb-2">Hesap Bakiyesi</h3>
-                        <div class="flex space-x-6">
-                            <div class="flex items-center">
-                                <i class="fas fa-coins text-yellow-400 mr-2"></i>
-                                <span class="text-white font-medium">Coin: </span>
-                                <span class="text-yellow-400 font-bold ml-1" id="user-coins">0</span>
+            <div class="card" style="margin-bottom: 40px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <h3 style="color: #10b981; margin-bottom: 15px; font-size: 1.4rem;">
+                            <i class="fas fa-wallet"></i> Hesap Bakiyesi
+                        </h3>
+                        <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                            <div class="balance-item">
+                                <i class="fas fa-coins" style="color: #f59e0b;"></i>
+                                <span>Coin: </span>
+                                <span style="color: #f59e0b; font-weight: bold;" id="user-coins">0</span>
                             </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-gem text-purple-400 mr-2"></i>
-                                <span class="text-white font-medium">Token: </span>
-                                <span class="text-purple-400 font-bold ml-1" id="user-tokens">0</span>
+                            <div class="balance-item">
+                                <i class="fas fa-gem" style="color: #8b5cf6;"></i>
+                                <span>Token: </span>
+                                <span style="color: #8b5cf6; font-weight: bold;" id="user-tokens">0</span>
                             </div>
                         </div>
                     </div>
-                    <div class="flex space-x-3">
-                        <button class="btn-secondary">
-                            <i class="fas fa-plus mr-2"></i>Coin Satın Al
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-plus"></i> Coin Satın Al
                         </button>
-                        <button class="btn-primary">
-                            <i class="fas fa-plus mr-2"></i>Token Satın Al
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Token Satın Al
                         </button>
                     </div>
                 </div>
@@ -45,211 +100,293 @@
         <% } %>
 
         <!-- Category Filter -->
-        <div class="mb-8">
-            <div class="flex flex-wrap gap-4 justify-center">
-                <a href="/market?category=all" 
-                   class="category-btn <%= currentCategory === 'all' ? 'active' : '' %>">
-                    <i class="fas fa-th-large mr-2"></i>Tümü
-                </a>
-                <% if (categories && categories.length > 0) { %>
-                    <% categories.forEach(function(cat) { %>
-                        <a href="/market?category=<%= encodeURIComponent(cat.category) %>" 
-                           class="category-btn <%= currentCategory === cat.category ? 'active' : '' %>">
-                            <% if (cat.category === 'Rütbeler') { %>
-                                <i class="fas fa-crown mr-2"></i>
-                            <% } else if (cat.category === 'Kitler') { %>
-                                <i class="fas fa-box mr-2"></i>
-                            <% } else if (cat.category === 'Kozmetikler') { %>
-                                <i class="fas fa-star mr-2"></i>
-                            <% } else { %>
-                                <i class="fas fa-tag mr-2"></i>
-                            <% } %>
-                            <%= cat.category %>
-                        </a>
-                    <% }); %>
-                <% } %>
+        <div style="margin-bottom: 40px;">
+            <div class="category-filter">
+                <button class="category-btn active" data-category="all">
+                    <i class="fas fa-th"></i> Tümü
+                </button>
+                <button class="category-btn" data-category="ranks">
+                    <i class="fas fa-crown"></i> Rütbeler
+                </button>
+                <button class="category-btn" data-category="kits">
+                    <i class="fas fa-box"></i> Kitler
+                </button>
+                <button class="category-btn" data-category="cosmetics">
+                    <i class="fas fa-palette"></i> Kozmetikler
+                </button>
+                <button class="category-btn" data-category="boosters">
+                    <i class="fas fa-rocket"></i> Güçlendiriciler
+                </button>
+                <button class="category-btn" data-category="other">
+                    <i class="fas fa-star"></i> Diğer
+                </button>
             </div>
         </div>
 
-        <!-- Items Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <% if (items && items.length > 0) { %>
-                <% items.forEach(function(item) { %>
-                    <div class="market-item-card" data-item-id="<%= item.id %>">
-                        <!-- Item Image -->
-                        <div class="item-image">
-                            <img src="<%= item.image || '/images/default-item.png' %>" 
-                                 alt="<%= item.name %>" 
-                                 class="w-full h-32 object-cover">
-                            <div class="item-category">
-                                <%= item.category %>
-                            </div>
-                        </div>
-                        
-                        <!-- Item Info -->
-                        <div class="p-4">
-                            <h3 class="text-lg font-bold text-white mb-2 line-clamp-1">
-                                <%= item.name %>
-                            </h3>
-                            <p class="text-gray-300 text-sm mb-4 line-clamp-2">
-                                <%= item.description %>
-                            </p>
-                            
-                            <!-- Price -->
-                            <div class="flex justify-between items-center mb-4">
-                                <div class="price-tag">
-                                    <% if (item.currency === 'coins') { %>
-                                        <i class="fas fa-coins text-yellow-400 mr-1"></i>
-                                        <span class="text-yellow-400 font-bold"><%= item.price %></span>
-                                    <% } else { %>
-                                        <i class="fas fa-gem text-purple-400 mr-1"></i>
-                                        <span class="text-purple-400 font-bold"><%= item.price %></span>
-                                    <% } %>
-                                </div>
-                            </div>
-                            
-                            <!-- Purchase Button -->
-                            <% if (typeof user !== 'undefined' && user) { %>
-                                <button onclick="purchaseItem(<%= item.id %>, '<%= item.name %>', <%= item.price %>, '<%= item.currency %>')" 
-                                        class="w-full btn-primary">
-                                    <i class="fas fa-shopping-cart mr-2"></i>
-                                    Satın Al
-                                </button>
-                            <% } else { %>
-                                <a href="/login" class="w-full btn-secondary text-center block">
-                                    <i class="fas fa-sign-in-alt mr-2"></i>
-                                    Giriş Yap
-                                </a>
-                            <% } %>
-                        </div>
-                    </div>
-                <% }); %>
-            <% } else { %>
-                <div class="col-span-full text-center py-16">
-                    <i class="fas fa-box-open text-gray-600 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-400 mb-2">Bu kategoride ürün bulunamadı</h3>
-                    <p class="text-gray-500">Farklı bir kategori deneyin veya daha sonra tekrar kontrol edin.</p>
+        <!-- Market Items Grid -->
+        <div class="market-grid" id="market-items">
+            <!-- Sample Items -->
+            <div class="market-item" data-category="ranks">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop&crop=center" alt="VIP Rütbesi" onerror="this.src='https://via.placeholder.com/200x200/10b981/ffffff?text=VIP'">
+                    <div class="item-badge rank">RÜTBE</div>
                 </div>
+                <div class="item-content">
+                    <h3 class="item-title">VIP Rütbesi</h3>
+                    <p class="item-description">Özel komutlar, renkli nick ve daha fazla ayrıcalık!</p>
+                    <div class="item-features">
+                        <span><i class="fas fa-check"></i> Renkli Nick</span>
+                        <span><i class="fas fa-check"></i> VIP Komutları</span>
+                        <span><i class="fas fa-check"></i> Özel Kit</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-price">
+                            <span class="price-amount">299</span>
+                            <span class="price-currency">Token</span>
+                        </div>
+                        <button class="btn btn-primary btn-buy" data-item="vip-rank">
+                            <i class="fas fa-shopping-cart"></i> Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-item" data-category="ranks">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&h=200&fit=crop&crop=center" alt="Premium Rütbesi" onerror="this.src='https://via.placeholder.com/200x200/8b5cf6/ffffff?text=PREMIUM'">
+                    <div class="item-badge rank premium">PREMIUM</div>
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">Premium Rütbesi</h3>
+                    <p class="item-description">En üst seviye ayrıcalıklar ve özel içerikler!</p>
+                    <div class="item-features">
+                        <span><i class="fas fa-check"></i> Tüm VIP Özellikleri</span>
+                        <span><i class="fas fa-check"></i> Premium Komutları</span>
+                        <span><i class="fas fa-check"></i> Özel Bölgeler</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-price">
+                            <span class="price-amount">599</span>
+                            <span class="price-currency">Token</span>
+                        </div>
+                        <button class="btn btn-primary btn-buy" data-item="premium-rank">
+                            <i class="fas fa-shopping-cart"></i> Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-item" data-category="kits">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=200&fit=crop&crop=center" alt="Savaşçı Kiti" onerror="this.src='https://via.placeholder.com/200x200/ef4444/ffffff?text=KIT'">
+                    <div class="item-badge kit">KİT</div>
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">Savaşçı Kiti</h3>
+                    <p class="item-description">Güçlü silahlar ve zırhlarla savaşa hazır ol!</p>
+                    <div class="item-features">
+                        <span><i class="fas fa-sword"></i> Diamond Kılıç</span>
+                        <span><i class="fas fa-shield-alt"></i> Full Diamond Zırh</span>
+                        <span><i class="fas fa-apple-alt"></i> Yiyecekler</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-price">
+                            <span class="price-amount">150</span>
+                            <span class="price-currency">Coin</span>
+                        </div>
+                        <button class="btn btn-primary btn-buy" data-item="warrior-kit">
+                            <i class="fas fa-shopping-cart"></i> Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-item" data-category="cosmetics">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1551103782-8ab07afd4c8d?w=200&h=200&fit=crop&crop=center" alt="Ejder Kanatları" onerror="this.src='https://via.placeholder.com/200x200/10b981/ffffff?text=WINGS'">
+                    <div class="item-badge cosmetic">KOZMETİK</div>
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">Ejder Kanatları</h3>
+                    <p class="item-description">Arkanda muhteşem ejder kanatları ile öne çık!</p>
+                    <div class="item-features">
+                        <span><i class="fas fa-eye"></i> Görsel Efekt</span>
+                        <span><i class="fas fa-star"></i> Eşsiz Tasarım</span>
+                        <span><i class="fas fa-fire"></i> Animasyonlu</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-price">
+                            <span class="price-amount">199</span>
+                            <span class="price-currency">Token</span>
+                        </div>
+                        <button class="btn btn-primary btn-buy" data-item="dragon-wings">
+                            <i class="fas fa-shopping-cart"></i> Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-item" data-category="boosters">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=200&h=200&fit=crop&crop=center" alt="XP Güçlendirici" onerror="this.src='https://via.placeholder.com/200x200/f59e0b/ffffff?text=XP'">
+                    <div class="item-badge booster">GÜÇLENDİRİCİ</div>
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">XP Güçlendirici</h3>
+                    <p class="item-description">1 saat boyunca %200 fazla XP kazan!</p>
+                    <div class="item-features">
+                        <span><i class="fas fa-clock"></i> 1 Saat Süre</span>
+                        <span><i class="fas fa-chart-line"></i> %200 Bonus</span>
+                        <span><i class="fas fa-bolt"></i> Anında Aktif</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-price">
+                            <span class="price-amount">50</span>
+                            <span class="price-currency">Coin</span>
+                        </div>
+                        <button class="btn btn-primary btn-buy" data-item="xp-booster">
+                            <i class="fas fa-shopping-cart"></i> Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="market-item" data-category="other">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=200&h=200&fit=crop&crop=center" alt="Koruma Taşı" onerror="this.src='https://via.placeholder.com/200x200/6366f1/ffffff?text=STONE'">
+                    <div class="item-badge other">DİĞER</div>
+                </div>
+                <div class="item-content">
+                    <h3 class="item-title">Koruma Taşı</h3>
+                    <p class="item-description">Evini ve eşyalarını grieferlardan koru!</p>
+                    <div class="item-features">
+                        <span><i class="fas fa-shield"></i> Alan Koruması</span>
+                        <span><i class="fas fa-lock"></i> Güvenli Sandık</span>
+                        <span><i class="fas fa-home"></i> Ev Koruması</span>
+                    </div>
+                    <div class="item-footer">
+                        <div class="item-price">
+                            <span class="price-amount">100</span>
+                            <span class="price-currency">Token</span>
+                        </div>
+                        <button class="btn btn-primary btn-buy" data-item="protection-stone">
+                            <i class="fas fa-shopping-cart"></i> Satın Al
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-cube"></i> MinecraftTR</h3>
+                    <p>Türkiye'nin en eğlenceli Minecraft sunucusu. Arkadaşlarınla birlikte unutulmaz anılar yaşa!</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Oyun Modları</h4>
+                    <ul>
+                        <li><a href="/games/survival">Survival</a></li>
+                        <li><a href="/games/bedwars">BedWars</a></li>
+                        <li><a href="/games/skywars">SkyWars</a></li>
+                        <li><a href="/games/prison">Prison</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Bağlantılar</h4>
+                    <ul>
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                        <li><a href="/rules">Kurallar</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <div class="server-ip">
+                        <i class="fas fa-server"></i>
+                        <span>play.minecrafttr.com</span>
+                        <button onclick="copyIP()" title="IP'yi Kopyala">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p><i class="fas fa-envelope"></i> info@minecrafttr.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 MinecraftTR. Tüm hakları saklıdır.</p>
+                <p>Bu sunucu Mojang Studios ile bağlantılı değildir.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script>
+        // Market specific functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category filtering
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            const marketItems = document.querySelectorAll('.market-item');
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    const category = btn.dataset.category;
+                    
+                    marketItems.forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Buy button handlers
+            const buyButtons = document.querySelectorAll('.btn-buy');
+            buyButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = this.dataset.item;
+                    const itemTitle = this.closest('.market-item').querySelector('.item-title').textContent;
+                    
+                    if (confirm(`${itemTitle} satın almak istediğinizden emin misiniz?`)) {
+                        // Here you would make an API call to purchase the item
+                        utils.showToast('Satın alma işlemi başlatıldı!', 'info');
+                    }
+                });
+            });
+
+            // Load user balance if logged in
+            <% if (typeof user !== 'undefined' && user) { %>
+                loadUserBalance();
             <% } %>
-        </div>
-    </div>
-</div>
-
-<!-- Purchase Confirmation Modal -->
-<div id="purchase-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 border border-gray-700">
-        <div class="text-center">
-            <div class="mb-4">
-                <i class="fas fa-shopping-cart text-green-400 text-4xl"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2">Satın Alma Onayı</h3>
-            <p class="text-gray-300 mb-6" id="purchase-message">
-                Bu ürünü satın almak istediğinizden emin misiniz?
-            </p>
-            <div class="flex space-x-4">
-                <button onclick="closePurchaseModal()" class="flex-1 btn-secondary">
-                    İptal
-                </button>
-                <button onclick="confirmPurchase()" class="flex-1 btn-primary" id="confirm-purchase-btn">
-                    Satın Al
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Success/Error Toast -->
-<div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 hidden">
-    <span id="toast-message"></span>
-</div>
-
-<script>
-let currentPurchase = null;
-
-function purchaseItem(itemId, itemName, price, currency) {
-    currentPurchase = { itemId, itemName, price, currency };
-    
-    const currencyIcon = currency === 'coins' ? 
-        '<i class="fas fa-coins text-yellow-400"></i>' : 
-        '<i class="fas fa-gem text-purple-400"></i>';
-    
-    document.getElementById('purchase-message').innerHTML = 
-        `<strong>${itemName}</strong> ürününü ${currencyIcon} <strong>${price} ${currency}</strong> karşılığında satın almak istediğinizden emin misiniz?`;
-    
-    document.getElementById('purchase-modal').classList.remove('hidden');
-    document.getElementById('purchase-modal').classList.add('flex');
-}
-
-function closePurchaseModal() {
-    document.getElementById('purchase-modal').classList.add('hidden');
-    document.getElementById('purchase-modal').classList.remove('flex');
-    currentPurchase = null;
-}
-
-async function confirmPurchase() {
-    if (!currentPurchase) return;
-    
-    const confirmBtn = document.getElementById('confirm-purchase-btn');
-    confirmBtn.disabled = true;
-    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Satın Alınıyor...';
-    
-    try {
-        const response = await fetch('/purchase', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                itemId: currentPurchase.itemId
-            })
         });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showToast(result.message, 'success');
-            closePurchaseModal();
-            // Update user balance if visible
-            updateUserBalance();
-        } else {
-            showToast(result.message, 'error');
+
+        function loadUserBalance() {
+            // This would typically fetch from an API
+            // For now, we'll use dummy data
+            document.getElementById('user-coins').textContent = '1,250';
+            document.getElementById('user-tokens').textContent = '89';
         }
-    } catch (error) {
-        showToast('Satın alma sırasında bir hata oluştu!', 'error');
-    } finally {
-        confirmBtn.disabled = false;
-        confirmBtn.innerHTML = '<i class="fas fa-shopping-cart mr-2"></i>Satın Al';
-    }
-}
-
-function showToast(message, type) {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    
-    toastMessage.innerHTML = message;
-    
-    if (type === 'success') {
-        toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 bg-green-500 text-white';
-    } else {
-        toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 bg-red-500 text-white';
-    }
-    
-    toast.classList.remove('hidden');
-    
-    setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 5000);
-}
-
-async function updateUserBalance() {
-    // This would fetch updated user balance and update the UI
-    // Implementation depends on your API structure
-}
-
-// Close modal when clicking outside
-document.getElementById('purchase-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closePurchaseModal();
-    }
-});
-</script>
+    </script>
+</body>
+</html>
