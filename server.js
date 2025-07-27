@@ -21,12 +21,17 @@ app.use(helmet());
 app.use(compression());
 app.use(cors());
 
-// Rate limiting
+// Rate limiting - daha gevşek limitler
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 500, // 500 request per minute
+  message: 'Çok fazla istek gönderildi, lütfen bir dakika bekleyin.',
+  standardHeaders: true,
+  legacyHeaders: false,
 });
-app.use(limiter);
+
+// Sadece API routes için rate limiting uygula
+app.use('/api/', limiter);
 
 // Middleware
 app.use(bodyParser.json());
@@ -341,12 +346,12 @@ app.post('/login', async (req, res) => {
       return res.render('login', { error: 'Yanlış şifre!' });
     }
     
-    // Get or create website user profile
-    const [websiteUser] = await db.execute(
+        // Get or create website user profile
+    let [websiteUser] = await db.execute(
       'SELECT * FROM website_users WHERE username = ?',
       [username]
     );
-    
+
     if (websiteUser.length === 0) {
       // Create website profile
       const avatar = await getPlayerSkin(username);
@@ -354,11 +359,18 @@ app.post('/login', async (req, res) => {
         'INSERT INTO website_users (username, avatar) VALUES (?, ?)',
         [username, avatar]
       );
+      
+      // Get the newly created user
+      [websiteUser] = await db.execute(
+        'SELECT * FROM website_users WHERE username = ?',
+        [username]
+      );
     }
-    
+
     req.session.user = {
       username: user.username,
-      email: user.email
+      email: user.email,
+      is_admin: websiteUser[0].is_admin || false
     };
     
     res.redirect('/dashboard');

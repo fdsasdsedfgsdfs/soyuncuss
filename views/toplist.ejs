@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sıralama - MinecraftTR</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-cube"></i>
+                MinecraftTR
+            </a>
+            
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i> Market</a></li>
+                <li><a href="/toplist" class="nav-link active"><i class="fas fa-trophy"></i> Sıralama</a></li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i> Haberler</a></li>
+                <li class="dropdown">
+                    <a href="/games" class="nav-link"><i class="fas fa-gamepad"></i> Oyunlar</a>
+                    <div class="dropdown-menu">
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i> Survival</a>
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i> BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i> SkyWars</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i> Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-mountain"></i> SkyBlock</a>
+                    </div>
+                </li>
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <li class="dropdown">
+                        <a href="/dashboard" class="nav-link"><i class="fas fa-user"></i> <%= user.username %></a>
+                        <div class="dropdown-menu">
+                            <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> Panel</a>
+                            <a href="/profile" class="dropdown-item"><i class="fas fa-user-circle"></i> Profil</a>
+                            <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+                        </div>
+                    </li>
+                <% } else { %>
+                    <li><a href="/login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Giriş</a></li>
+                    <li><a href="/register" class="nav-link btn-primary"><i class="fas fa-user-plus"></i> Kayıt</a></li>
+                <% } %>
+            </ul>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-trophy"></i>
+                Sıralama
+            </h1>
+            <p class="page-subtitle">En büyük destekçiler ve en aktif oyuncular!</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 40px; margin-bottom: 80px;">
+        
+        <!-- Category Selection -->
+        <div class="toplist-categories">
+            <button class="category-btn active" data-category="donators">
+                <i class="fas fa-hand-holding-usd"></i> En Çok Bağış Yapanlar
+            </button>
+            <button class="category-btn" data-category="playtime">
+                <i class="fas fa-clock"></i> En Aktif Oyuncular
+            </button>
+        </div>
+
+        <!-- Top Donators List -->
+        <div class="toplist-section" id="donators-list">
+            <div class="section-header">
+                <h2>
+                    <i class="fas fa-crown" style="color: #f59e0b;"></i>
+                    En Çok Bağış Yapanlar
+                </h2>
+                <p>Sunucumuza en çok destek veren oyuncularımız</p>
+            </div>
+
+            <div class="toplist-grid">
+                <% if (topDonators && topDonators.length > 0) { %>
+                    <% topDonators.forEach(function(donor, index) { %>
+                        <div class="toplist-item" data-rank="<%= index + 1 %>">
+                            <div class="rank-number rank-<%= index + 1 <= 3 ? index + 1 : 'other' %>">
+                                <% if (index + 1 === 1) { %>
+                                    <i class="fas fa-crown"></i>
+                                <% } else if (index + 1 === 2) { %>
+                                    <i class="fas fa-medal"></i>
+                                <% } else if (index + 1 === 3) { %>
+                                    <i class="fas fa-award"></i>
+                                <% } else { %>
+                                    <%= index + 1 %>
+                                <% } %>
+                            </div>
+                            
+                            <div class="player-avatar">
+                                <img src="<%= donor.avatar || `https://crafatar.com/avatars/${donor.username}?size=64&overlay` %>" 
+                                     alt="<%= donor.username %>" 
+                                     onerror="this.src='https://crafatar.com/avatars/steve?size=64'">
+                            </div>
+                            
+                            <div class="player-info">
+                                <h3 class="player-name"><%= donor.username %></h3>
+                                <div class="player-rank">
+                                    <i class="fas fa-star"></i>
+                                    <%= donor.rank_name || 'Oyuncu' %>
+                                </div>
+                            </div>
+                            
+                            <div class="player-stats">
+                                <div class="stat-value">
+                                    <i class="fas fa-coins" style="color: #f59e0b;"></i>
+                                    <%= Math.round(donor.total_amount || 0) %> TL
+                                </div>
+                                <div class="stat-label">Toplam Bağış</div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Henüz bağış yapan kimse yok</h3>
+                        <p>İlk bağışçı sen ol ve listede yer al!</p>
+                        <a href="/market" class="btn btn-primary">Market'e Git</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Top Playtime List -->
+        <div class="toplist-section" id="playtime-list" style="display: none;">
+            <div class="section-header">
+                <h2>
+                    <i class="fas fa-clock" style="color: #10b981;"></i>
+                    En Aktif Oyuncular
+                </h2>
+                <p>Sunucumuzda en çok vakit geçiren oyuncularımız</p>
+            </div>
+
+            <div class="toplist-grid">
+                <% if (topPlaytime && topPlaytime.length > 0) { %>
+                    <% topPlaytime.forEach(function(player, index) { %>
+                        <div class="toplist-item" data-rank="<%= index + 1 %>">
+                            <div class="rank-number rank-<%= index + 1 <= 3 ? index + 1 : 'other' %>">
+                                <% if (index + 1 === 1) { %>
+                                    <i class="fas fa-crown"></i>
+                                <% } else if (index + 1 === 2) { %>
+                                    <i class="fas fa-medal"></i>
+                                <% } else if (index + 1 === 3) { %>
+                                    <i class="fas fa-award"></i>
+                                <% } else { %>
+                                    <%= index + 1 %>
+                                <% } %>
+                            </div>
+                            
+                            <div class="player-avatar">
+                                <img src="<%= player.avatar || `https://crafatar.com/avatars/${player.username}?size=64&overlay` %>" 
+                                     alt="<%= player.username %>" 
+                                     onerror="this.src='https://crafatar.com/avatars/steve?size=64'">
+                            </div>
+                            
+                            <div class="player-info">
+                                <h3 class="player-name"><%= player.username %></h3>
+                                <div class="player-rank">
+                                    <i class="fas fa-star"></i>
+                                    <%= player.rank_name || 'Oyuncu' %>
+                                </div>
+                            </div>
+                            
+                            <div class="player-stats">
+                                <div class="stat-value">
+                                    <i class="fas fa-clock" style="color: #10b981;"></i>
+                                    <%= Math.floor((player.total_playtime || 0) / 60) %> saat
+                                </div>
+                                <div class="stat-label">Toplam Süre</div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <h3>Henüz oyun süresi verisi yok</h3>
+                        <p>Sunucuya giriş yap ve listede yer al!</p>
+                        <a href="/" class="btn btn-primary">Sunucuya Katıl</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Rewards Info -->
+        <div class="rewards-info">
+            <h3><i class="fas fa-gift"></i> Ödüller</h3>
+            <div class="rewards-grid">
+                <div class="reward-item">
+                    <div class="reward-icon gold">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="reward-content">
+                        <h4>1. Sıra</h4>
+                        <p>Özel crown efekti + 500 token</p>
+                    </div>
+                </div>
+                
+                <div class="reward-item silver">
+                    <div class="reward-icon silver">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="reward-content">
+                        <h4>2. Sıra</h4>
+                        <p>Özel medal efekti + 300 token</p>
+                    </div>
+                </div>
+                
+                <div class="reward-item bronze">
+                    <div class="reward-icon bronze">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="reward-content">
+                        <h4>3. Sıra</h4>
+                        <p>Özel award efekti + 200 token</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-cube"></i> MinecraftTR</h3>
+                    <p>Türkiye'nin en eğlenceli Minecraft sunucusu. Arkadaşlarınla birlikte unutulmaz anılar yaşa!</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Oyun Modları</h4>
+                    <ul>
+                        <li><a href="/games/survival">Survival</a></li>
+                        <li><a href="/games/bedwars">BedWars</a></li>
+                        <li><a href="/games/skywars">SkyWars</a></li>
+                        <li><a href="/games/prison">Prison</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Bağlantılar</h4>
+                    <ul>
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                        <li><a href="/rules">Kurallar</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <div class="server-ip">
+                        <i class="fas fa-server"></i>
+                        <span>play.minecrafttr.com</span>
+                        <button onclick="copyIP()" title="IP'yi Kopyala">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p><i class="fas fa-envelope"></i> info@minecrafttr.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 MinecraftTR. Tüm hakları saklıdır.</p>
+                <p>Bu sunucu Mojang Studios ile bağlantılı değildir.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category switching
+            const categoryBtns = document.querySelectorAll('.toplist-categories .category-btn');
+            const sections = {
+                'donators': document.getElementById('donators-list'),
+                'playtime': document.getElementById('playtime-list')
+            };
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active from all buttons
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    // Add active to clicked button
+                    btn.classList.add('active');
+                    
+                    // Hide all sections
+                    Object.values(sections).forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    // Show selected section
+                    const category = btn.dataset.category;
+                    if (sections[category]) {
+                        sections[category].style.display = 'block';
+                    }
+                });
+            });
+
+            // Animate rank items when they come into view
+            const observeRankItems = () => {
+                const rankItems = document.querySelectorAll('.toplist-item');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.opacity = '1';
+                                entry.target.style.transform = 'translateY(0)';
+                            }, index * 100);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                rankItems.forEach(item => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(30px)';
+                    item.style.transition = 'all 0.6s ease';
+                    observer.observe(item);
+                });
+            };
+
+            observeRankItems();
+        });
+    </script>
+</body>
+</html>

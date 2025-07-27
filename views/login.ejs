@@ -1,155 +1,303 @@
-<%- include('layout', { body: '', title: 'Giriş Yap' }) %>
-
-<div class="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div class="text-center">
-            <div class="flex justify-center mb-6">
-                <div class="bg-green-500 p-4 rounded-full">
-                    <i class="fas fa-user text-white text-3xl"></i>
-                </div>
-            </div>
-            <h2 class="text-3xl font-extrabold text-white">
-                Hesabına Giriş Yap
-            </h2>
-            <p class="mt-2 text-gray-300">
-                MinecraftTR sunucusuna hoş geldin! Hesabın yoksa 
-                <a href="/register" class="text-green-400 hover:text-green-300 font-medium">
-                    kayıt ol
-                </a>
-            </p>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap - MinecraftTR</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-cube"></i>
+                MinecraftTR
+            </a>
+            
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i> Market</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i> Sıralama</a></li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i> Haberler</a></li>
+                <li class="dropdown">
+                    <a href="/games" class="nav-link"><i class="fas fa-gamepad"></i> Oyunlar</a>
+                    <div class="dropdown-menu">
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i> Survival</a>
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i> BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i> SkyWars</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i> Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-mountain"></i> SkyBlock</a>
+                    </div>
+                </li>
+                <li><a href="/login" class="nav-link active"><i class="fas fa-sign-in-alt"></i> Giriş</a></li>
+                <li><a href="/register" class="nav-link btn-primary"><i class="fas fa-user-plus"></i> Kayıt</a></li>
+            </ul>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-        
-        <form class="mt-8 space-y-6" action="/login" method="POST">
-            <div class="rounded-md shadow-sm space-y-4">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-300 mb-2">
-                        Kullanıcı Adı
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-user text-gray-400"></i>
+    </nav>
+
+    <!-- Login Section -->
+    <div class="auth-section">
+        <div class="auth-container">
+            <!-- Login Card -->
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h1>Hesabına Giriş Yap</h1>
+                    <p>MinecraftTR sunucusuna hoş geldin! Hesabın yoksa <a href="/register">kayıt ol</a></p>
+                </div>
+
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <form class="auth-form" action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i>
+                            Kullanıcı Adı
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Minecraft kullanıcı adın"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Şifre
+                        </label>
+                        <div class="password-input">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Şifren"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                        <input id="username" name="username" type="text" required 
-                               class="auth-input pl-10" 
-                               placeholder="Minecraft kullanıcı adın">
                     </div>
-                </div>
-                
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
-                        Şifre
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember">
+                            <span class="checkmark"></span>
+                            Beni hatırla
+                        </label>
+                        <a href="/forgot-password" class="forgot-link">Şifremi unuttum</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Giriş Yap
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <div class="divider">
+                        <span>veya</span>
+                    </div>
+                    
+                    <div class="register-link">
+                        <p>Hesabın yok mu? <a href="/register">Hemen kayıt ol!</a></p>
+                    </div>
+
+                    <div class="server-info">
+                        <div class="server-ip-display">
+                            <i class="fas fa-server"></i>
+                            <span>play.minecrafttr.com</span>
+                            <button onclick="copyIP()" title="IP'yi Kopyala">
+                                <i class="fas fa-copy"></i>
+                            </button>
                         </div>
-                        <input id="password" name="password" type="password" required 
-                               class="auth-input pl-10" 
-                               placeholder="Şifren">
+                        <p class="server-description">Sunucuya katılmak için yukarıdaki IP'yi kullan!</p>
                     </div>
                 </div>
             </div>
 
-            <% if (typeof error !== 'undefined' && error) { %>
-                <div class="bg-red-500 bg-opacity-20 border border-red-500 text-red-300 px-4 py-3 rounded-lg">
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <span><%= error %></span>
+            <!-- Info Panel -->
+            <div class="auth-info">
+                <div class="info-content">
+                    <h2>
+                        <i class="fas fa-gamepad"></i>
+                        MinecraftTR'ye Hoş Geldin!
+                    </h2>
+                    <p>Türkiye'nin en büyük Minecraft sunucusunda maceraya atıl! Arkadaşlarınla birlikte eğlenceli vakit geçir.</p>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-tree"></i>
+                            <div>
+                                <h4>Survival</h4>
+                                <p>Doğada hayatta kalma mücadelesi</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <i class="fas fa-bed"></i>
+                            <div>
+                                <h4>BedWars</h4>
+                                <p>Takım halinde savaş oyunu</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <i class="fas fa-cloud"></i>
+                            <div>
+                                <h4>SkyWars</h4>
+                                <p>Gökyüzünde savaş arena oyunu</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <i class="fas fa-shopping-bag"></i>
+                            <div>
+                                <h4>Market</h4>
+                                <p>Rütbeler, kitler ve kozmetikler</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            <% } %>
 
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <input id="remember-me" name="remember-me" type="checkbox" 
-                           class="h-4 w-4 text-green-500 focus:ring-green-400 border-gray-600 bg-gray-700 rounded">
-                    <label for="remember-me" class="ml-2 block text-sm text-gray-300">
-                        Beni hatırla
-                    </label>
-                </div>
-
-                <div class="text-sm">
-                    <a href="/forgot-password" class="text-green-400 hover:text-green-300">
-                        Şifremi unuttum
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <i class="fas fa-sign-in-alt text-green-300 group-hover:text-green-200"></i>
-                    </span>
-                    Giriş Yap
-                </button>
-            </div>
-
-            <div class="text-center">
-                <p class="text-gray-300">
-                    Hesabın yok mu? 
-                    <a href="/register" class="text-green-400 hover:text-green-300 font-medium">
-                        Hemen kayıt ol
-                    </a>
-                </p>
-            </div>
-        </form>
-        
-        <!-- Game Information -->
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mt-8">
-            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
-                <i class="fas fa-info-circle text-blue-400 mr-2"></i>
-                Oyuna Nasıl Bağlanırım?
-            </h3>
-            <div class="space-y-3 text-sm text-gray-300">
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">1.</span>
-                    <span>Minecraft'ı aç ve "Multiplayer" seçeneğine tıkla</span>
-                </div>
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">2.</span>
-                    <span>"Add Server" butonuna tıkla ve sunucu IP'sini gir:</span>
-                </div>
-                <div class="bg-gray-700 rounded px-3 py-2 font-mono text-green-400 text-center">
-                    play.minecrafttr.com
-                </div>
-                <div class="flex items-start">
-                    <span class="text-green-400 font-bold mr-2">3.</span>
-                    <span>Sunucuya bağlan ve oyunda /register komutu ile kayıt ol</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Features -->
-        <div class="bg-gray-800 border border-gray-700 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-white mb-4">
-                Seni Bekleyen Özellikler
-            </h3>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div class="flex items-center text-gray-300">
-                    <i class="fas fa-bed text-red-400 mr-2"></i>
-                    <span>BedWars</span>
-                </div>
-                <div class="flex items-center text-gray-300">
-                    <i class="fas fa-cloud text-blue-400 mr-2"></i>
-                    <span>SkyWars</span>
-                </div>
-                <div class="flex items-center text-gray-300">
-                    <i class="fas fa-tree text-green-400 mr-2"></i>
-                    <span>Survival</span>
-                </div>
-                <div class="flex items-center text-gray-300">
-                    <i class="fas fa-cube text-purple-400 mr-2"></i>
-                    <span>SkyBlock</span>
-                </div>
-                <div class="flex items-center text-gray-300">
-                    <i class="fas fa-lock text-orange-400 mr-2"></i>
-                    <span>Prison</span>
-                </div>
-                <div class="flex items-center text-gray-300">
-                    <i class="fas fa-star text-yellow-400 mr-2"></i>
-                    <span>Kozmetikler</span>
+                    <div class="stats-showcase">
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="15000">0</span>
+                            <span class="stat-label">Kayıtlı Oyuncu</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-target="500">0</span>
+                            <span class="stat-label">Online Oyuncu</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-cube"></i> MinecraftTR</h3>
+                    <p>Türkiye'nin en eğlenceli Minecraft sunucusu.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Bağlantılar</h4>
+                    <ul>
+                        <li><a href="/">Ana Sayfa</a></li>
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>İletişim</h4>
+                    <p><i class="fas fa-envelope"></i> info@minecrafttr.com</p>
+                    <p><i class="fas fa-server"></i> play.minecrafttr.com</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 MinecraftTR. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    <script>
+        // Password toggle functionality
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.nextElementSibling;
+            const icon = toggle.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // Animate stats numbers
+        document.addEventListener('DOMContentLoaded', function() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            
+            const animateNumber = (element) => {
+                const target = parseInt(element.dataset.target);
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(current).toLocaleString();
+                }, 16);
+            };
+
+            // Intersection Observer for animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateNumber(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            statNumbers.forEach(stat => observer.observe(stat));
+        });
+
+        // Form validation
+        document.querySelector('.auth-form').addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                e.preventDefault();
+                utils.showToast('Lütfen tüm alanları doldurun!', 'error');
+                return;
+            }
+            
+            if (username.length < 3) {
+                e.preventDefault();
+                utils.showToast('Kullanıcı adı en az 3 karakter olmalıdır!', 'error');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>
