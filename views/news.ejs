@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haberler - MinecraftTR</title>
+    <meta name="description" content="MinecraftTR sunucusu hakkında en son haberler ve duyurular">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    
+    <!-- CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/images/logo.png" alt="MinecraftTR" onerror="this.style.display='none'">
+                <span>MinecraftTR</span>
+            </a>
+            
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i>Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i>Market</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link"><i class="fas fa-gamepad"></i>Oyunlar <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/games/bedwars" class="dropdown-item"><i class="fas fa-bed"></i>BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item"><i class="fas fa-cloud"></i>SkyWars</a>
+                        <a href="/games/survival" class="dropdown-item"><i class="fas fa-tree"></i>Survival</a>
+                        <a href="/games/prison" class="dropdown-item"><i class="fas fa-lock"></i>Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item"><i class="fas fa-cube"></i>SkyBlock</a>
+                    </div>
+                </li>
+                <li><a href="/news" class="nav-link active"><i class="fas fa-newspaper"></i>Haberler</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i>Sıralama</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link"><i class="fas fa-star"></i>Kozmetikler <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/cosmetics/particles" class="dropdown-item"><i class="fas fa-sparkles"></i>Parçacıklar</a>
+                        <a href="/cosmetics/pets" class="dropdown-item"><i class="fas fa-paw"></i>Evcil Hayvanlar</a>
+                        <a href="/cosmetics/cloaks" class="dropdown-item"><i class="fas fa-user-tie"></i>Pelerinler</a>
+                        <a href="/cosmetics/hats" class="dropdown-item"><i class="fas fa-hat-wizard"></i>Şapkalar</a>
+                    </div>
+                </li>
+                
+                <li class="user-menu">
+                    <div class="server-status">
+                        <div class="status-dot"></div>
+                        <span id="player-count">Oyuncu: 0/100</span>
+                    </div>
+                    
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <div class="dropdown">
+                            <a href="#" class="nav-link">
+                                <img src="/images/default-avatar.png" alt="<%= user.username %>" class="user-avatar">
+                                <%= user.username %>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i>Panel</a>
+                                <a href="/profile/<%= user.username %>" class="dropdown-item"><i class="fas fa-user"></i>Profil</a>
+                                <a href="/purchases" class="dropdown-item"><i class="fas fa-shopping-cart"></i>Satın Alımlar</a>
+                                <% if (user.is_admin) { %>
+                                    <hr>
+                                    <a href="/admin" class="dropdown-item text-yellow"><i class="fas fa-cogs"></i>Yönetim</a>
+                                <% } %>
+                                <hr>
+                                <a href="/logout" class="dropdown-item text-red"><i class="fas fa-sign-out-alt"></i>Çıkış Yap</a>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-secondary">Giriş Yap</a>
+                        <a href="/register" class="btn btn-primary">Kayıt Ol</a>
+                    <% } %>
+                </li>
+            </ul>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">
+                <i class="fas fa-newspaper"></i>
+                Haberler & Duyurular
+            </h1>
+            <p class="page-subtitle">
+                MinecraftTR sunucusu hakkında en son gelişmeler ve güncellemeler
+            </p>
+        </div>
+    </section>
+
+    <!-- News Categories -->
+    <section style="background: #1f2937; padding: 40px 0;">
+        <div class="container">
+            <div class="news-categories">
+                <button class="category-btn active" data-category="all">
+                    <i class="fas fa-globe"></i>Tümü
+                </button>
+                <button class="category-btn" data-category="Duyuru">
+                    <i class="fas fa-bullhorn"></i>Duyurular
+                </button>
+                <button class="category-btn" data-category="Güncelleme">
+                    <i class="fas fa-sync-alt"></i>Güncellemeler
+                </button>
+                <button class="category-btn" data-category="Etkinlik">
+                    <i class="fas fa-calendar-alt"></i>Etkinlikler
+                </button>
+                <button class="category-btn" data-category="Maintenance">
+                    <i class="fas fa-tools"></i>Bakım
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Grid -->
+    <section class="news-main-section">
+        <div class="container">
+            <div class="news-main-grid" id="news-grid">
+                <% if (news && news.length > 0) { %>
+                    <% news.forEach(function(article) { %>
+                        <article class="news-main-card" data-category="<%= article.category %>">
+                            <div class="news-main-image">
+                                <img src="<%= article.image || '/images/news-default.jpg' %>" 
+                                     alt="<%= article.title %>"
+                                     onerror="this.src='/images/news-default.jpg'">
+                                <div class="news-main-badge <%= article.category.toLowerCase() %>">
+                                    <%= article.category %>
+                                </div>
+                                <% if (article.is_featured) { %>
+                                    <div class="featured-badge">
+                                        <i class="fas fa-star"></i>Öne Çıkan
+                                    </div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="news-main-content">
+                                <div class="news-main-meta">
+                                    <div class="news-author">
+                                        <i class="fas fa-user"></i>
+                                        <%= article.author %>
+                                    </div>
+                                    <div class="news-date">
+                                        <i class="fas fa-calendar"></i>
+                                        <%= new Date(article.created_at).toLocaleDateString('tr-TR') %>
+                                    </div>
+                                </div>
+                                
+                                <h2 class="news-main-title">
+                                    <%= article.title %>
+                                </h2>
+                                
+                                <p class="news-main-excerpt">
+                                    <%= article.content.substring(0, 200) %>...
+                                </p>
+                                
+                                <div class="news-main-actions">
+                                    <button class="btn btn-primary" onclick="openNewsModal(<%= article.id %>)">
+                                        <i class="fas fa-eye"></i>Devamını Oku
+                                    </button>
+                                    <div class="news-share">
+                                        <button class="share-btn" onclick="shareNews('<%= article.id %>')">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-news">
+                        <div class="no-news-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h3>Henüz Haber Yok</h3>
+                        <p>Şu anda gösterilecek haber bulunmuyor. Yakında yeni haberler için geri dönün!</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Modal -->
+    <div id="newsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Haber Başlığı</h2>
+                <button class="modal-close" onclick="closeNewsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalImage" class="modal-image"></div>
+                <div id="modalMeta" class="modal-meta"></div>
+                <div id="modalContent" class="modal-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-brand">
+                        <img src="/images/logo.png" alt="MinecraftTR" onerror="this.style.display='none'">
+                        <span>MinecraftTR</span>
+                    </div>
+                    <p class="footer-description">
+                        Türkiye'nin en büyük ve en kaliteli Minecraft sunucusu. 
+                        Binlerce oyuncu ile eğlenceli vakit geçirin!
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Hızlı Bağlantılar</h3>
+                    <ul class="footer-links">
+                        <li><a href="/market">Market</a></li>
+                        <li><a href="/news">Haberler</a></li>
+                        <li><a href="/toplist">Sıralama</a></li>
+                        <li><a href="/rules">Kurallar</a></li>
+                        <li><a href="/support">Destek</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Sunucu Bilgileri</h3>
+                    <ul class="footer-links">
+                        <li>IP: <span class="text-green">play.minecrafttr.com</span></li>
+                        <li>Port: <span class="text-green">25565</span></li>
+                        <li>Version: <span class="text-green">1.8 - 1.21</span></li>
+                        <li>Cracked: <span class="text-green">Desteklenir</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p style="color: #9ca3af;">
+                    © 2024 MinecraftTR. Tüm hakları saklıdır.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="/privacy">Gizlilik Politikası</a>
+                    <a href="/terms">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/main.js"></script>
+    <script>
+        // News data for modal
+        const newsData = <%- JSON.stringify(news || []) %>;
+        
+        // Category filtering
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                filterNews(category);
+            });
+        });
+        
+        function filterNews(category) {
+            const cards = document.querySelectorAll('.news-main-card');
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'block';
+                    card.style.animation = 'slideInUp 0.6s ease-out';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Open news modal
+        function openNewsModal(newsId) {
+            const article = newsData.find(n => n.id === newsId);
+            if (!article) return;
+            
+            document.getElementById('modalTitle').textContent = article.title;
+            document.getElementById('modalImage').innerHTML = `
+                <img src="${article.image || '/images/news-default.jpg'}" alt="${article.title}">
+            `;
+            document.getElementById('modalMeta').innerHTML = `
+                <div class="modal-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>${article.author}</span>
+                </div>
+                <div class="modal-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>${new Date(article.created_at).toLocaleDateString('tr-TR')}</span>
+                </div>
+                <div class="modal-meta-item">
+                    <i class="fas fa-tag"></i>
+                    <span>${article.category}</span>
+                </div>
+            `;
+            document.getElementById('modalContent').innerHTML = article.content.replace(/\n/g, '<br>');
+            
+            document.getElementById('newsModal').style.display = 'flex';
+        }
+        
+        // Close news modal
+        function closeNewsModal() {
+            document.getElementById('newsModal').style.display = 'none';
+        }
+        
+        // Share news
+        function shareNews(newsId) {
+            const url = `${window.location.origin}/news/${newsId}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'MinecraftTR Haber',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                MinecraftTR.utils.showToast('Link kopyalandı!');
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('newsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeNewsModal();
+            }
+        });
+    </script>
+</body>
+</html>

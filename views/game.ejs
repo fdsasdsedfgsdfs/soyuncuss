@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <% 
+    const gameModes = {
+        bedwars: { name: 'BedWars', icon: 'fas fa-bed', color: '#ef4444' },
+        skywars: { name: 'SkyWars', icon: 'fas fa-cloud', color: '#3b82f6' },
+        survival: { name: 'Survival', icon: 'fas fa-tree', color: '#10b981' },
+        prison: { name: 'Prison', icon: 'fas fa-lock', color: '#f97316' },
+        skyblock: { name: 'SkyBlock', icon: 'fas fa-cube', color: '#8b5cf6' }
+    };
+    const currentGame = gameModes[gamemode] || { name: 'Oyun', icon: 'fas fa-gamepad', color: '#6b7280' };
+    %>
+    <title><%= currentGame.name %> - MinecraftTR</title>
+    <meta name="description" content="<%= currentGame.name %> oyun modu hakkında detaylı bilgi ve özellikler">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    
+    <!-- CSS -->
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .game-hero {
+            background: linear-gradient(135deg, <%= currentGame.color %>, #1f2937);
+            position: relative;
+            padding: 140px 0 80px;
+            overflow: hidden;
+        }
+        
+        .game-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+        
+        .game-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .game-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: <%= currentGame.color %>;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(135deg, <%= currentGame.color %>20, rgba(255,255,255,0.05));
+            border: 1px solid <%= currentGame.color %>40;
+        }
+        
+        .stat-accent {
+            color: <%= currentGame.color %>;
+        }
+        
+        .btn-game {
+            background: linear-gradient(135deg, <%= currentGame.color %>, <%= currentGame.color %>CC);
+            color: white;
+            border: none;
+        }
+        
+        .btn-game:hover {
+            background: linear-gradient(135deg, <%= currentGame.color %>CC, <%= currentGame.color %>);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/images/logo.png" alt="MinecraftTR" onerror="this.style.display='none'">
+                <span>MinecraftTR</span>
+            </a>
+            
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i>Ana Sayfa</a></li>
+                <li><a href="/market" class="nav-link"><i class="fas fa-shopping-bag"></i>Market</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link active"><i class="fas fa-gamepad"></i>Oyunlar <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/games/bedwars" class="dropdown-item <%= gamemode === 'bedwars' ? 'active' : '' %>"><i class="fas fa-bed"></i>BedWars</a>
+                        <a href="/games/skywars" class="dropdown-item <%= gamemode === 'skywars' ? 'active' : '' %>"><i class="fas fa-cloud"></i>SkyWars</a>
+                        <a href="/games/survival" class="dropdown-item <%= gamemode === 'survival' ? 'active' : '' %>"><i class="fas fa-tree"></i>Survival</a>
+                        <a href="/games/prison" class="dropdown-item <%= gamemode === 'prison' ? 'active' : '' %>"><i class="fas fa-lock"></i>Prison</a>
+                        <a href="/games/skyblock" class="dropdown-item <%= gamemode === 'skyblock' ? 'active' : '' %>"><i class="fas fa-cube"></i>SkyBlock</a>
+                    </div>
+                </li>
+                <li><a href="/news" class="nav-link"><i class="fas fa-newspaper"></i>Haberler</a></li>
+                <li><a href="/toplist" class="nav-link"><i class="fas fa-trophy"></i>Sıralama</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link"><i class="fas fa-star"></i>Kozmetikler <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/cosmetics/particles" class="dropdown-item"><i class="fas fa-sparkles"></i>Parçacıklar</a>
+                        <a href="/cosmetics/pets" class="dropdown-item"><i class="fas fa-paw"></i>Evcil Hayvanlar</a>
+                        <a href="/cosmetics/cloaks" class="dropdown-item"><i class="fas fa-user-tie"></i>Pelerinler</a>
+                        <a href="/cosmetics/hats" class="dropdown-item"><i class="fas fa-hat-wizard"></i>Şapkalar</a>
+                    </div>
+                </li>
+                
+                <li class="user-menu">
+                    <div class="server-status">
+                        <div class="status-dot"></div>
+                        <span id="player-count">Oyuncu: 0/100</span>
+                    </div>
+                    
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <div class="dropdown">
+                            <a href="#" class="nav-link">
+                                <img src="/images/default-avatar.png" alt="<%= user.username %>" class="user-avatar">
+                                <%= user.username %>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i>Panel</a>
+                                <a href="/profile/<%= user.username %>" class="dropdown-item"><i class="fas fa-user"></i>Profil</a>
+                                <a href="/purchases" class="dropdown-item"><i class="fas fa-shopping-cart"></i>Satın Alımlar</a>
+                                <hr>
+                                <a href="/logout" class="dropdown-item text-red"><i class="fas fa-sign-out-alt"></i>Çıkış Yap</a>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <a href="/login" class="btn btn-secondary">Giriş Yap</a>
+                        <a href="/register" class="btn btn-primary">Kayıt Ol</a>
+                    <% } %>
+                </li>
+            </ul>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Game Hero -->
+    <section class="game-hero">
+        <div class="container">
+            <div class="game-content text-center">
+                <div class="game-icon">
+                    <i class="<%= currentGame.icon %>"></i>
+                </div>
+                <h1 class="hero-title">
+                    <%= currentGame.name %>
+                </h1>
+                <p class="hero-subtitle">
+                    <% if (gamemode === 'bedwars') { %>
+                        Takım arkadaşlarınla birlikte düşman yataklarını yok et ve kendi yatağını savun!
+                    <% } else if (gamemode === 'skywars') { %>
+                        Gökyüzündeki adalarda hayatta kalma mücadelesi ver ve son kalan olmaya çalış!
+                    <% } else if (gamemode === 'survival') { %>
+                        Kendi dünyını inşa et, kaynak topla ve diğer oyuncularla ticaret yap!
+                    <% } else if (gamemode === 'prison') { %>
+                        Hapishaneden kaçmaya çalış, rankını yükselt ve özgürlüğünü kazan!
+                    <% } else if (gamemode === 'skyblock') { %>
+                        Küçük bir adada başla ve onu büyük bir imparatorluğa dönüştür!
+                    <% } %>
+                </p>
+                
+                <div class="hero-actions">
+                    <button class="btn btn-game btn-lg" onclick="copyIP()">
+                        <i class="fas fa-play"></i>Hemen Oyna
+                    </button>
+                    <a href="/market" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-shopping-bag"></i>Market
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Statistics -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number stat-accent" data-count="2500">0</div>
+                    <div class="stat-label">Aktif Oyuncu</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-accent" data-count="15">0</div>
+                    <div class="stat-label">Farklı Arena</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-accent" data-count="50000">0</div>
+                    <div class="stat-label">Toplam Oyun</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-accent" data-count="24">24</div>
+                    <div class="stat-label">7/24 Aktif</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Features -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">
+                <span style="color: <%= currentGame.color %>"><%= currentGame.name %></span> Özellikleri
+            </h2>
+            <p class="section-subtitle">
+                Neden MinecraftTR'de <%= currentGame.name %> oynamalısın?
+            </p>
+            
+            <div class="features-grid">
+                <% if (gamemode === 'bedwars') { %>
+                    <div class="feature-card feature-highlight">
+                        <div class="feature-icon" style="background: <%= currentGame.color %>">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="feature-title">Takım Oyunu</h3>
+                        <p class="feature-description">
+                            2v2, 4v4 ve 8v8 modlarında arkadaşlarınla takım kur ve strateji geliştir.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #3b82f6">
+                            <i class="fas fa-hammer"></i>
+                        </div>
+                        <h3 class="feature-title">Gelişmiş Crafting</h3>
+                        <p class="feature-description">
+                            Özel yeteneğe sahip itemler craft et ve rakiplerini şaşırt.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #f59e0b">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3 class="feature-title">Liderlik Tablosu</h3>
+                        <p class="feature-description">
+                            Kazandığın her oyunla sıralamada yüksel ve ödüller kazan.
+                        </p>
+                    </div>
+                <% } else if (gamemode === 'skywars') { %>
+                    <div class="feature-card feature-highlight">
+                        <div class="feature-icon" style="background: <%= currentGame.color %>">
+                            <i class="fas fa-parachute-box"></i>
+                        </div>
+                        <h3 class="feature-title">Hızlı Oyun</h3>
+                        <p class="feature-description">
+                            10 dakikadan kısa süren hızlı tempolu battle royale deneyimi.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #10b981">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h3 class="feature-title">Sandık Sistemi</h3>
+                        <p class="feature-description">
+                            Her adada farklı güçte sandıklar bul ve güçlü itemler elde et.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #8b5cf6">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3 class="feature-title">Özel Yetenekler</h3>
+                        <p class="feature-description">
+                            Kit sistemiyle farklı oyun tarzları dene ve yetenekleri keşfet.
+                        </p>
+                    </div>
+                <% } else if (gamemode === 'survival') { %>
+                    <div class="feature-card feature-highlight">
+                        <div class="feature-icon" style="background: <%= currentGame.color %>">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3 class="feature-title">Claim Sistemi</h3>
+                        <p class="feature-description">
+                            Arazini koru, evini güvende tut ve genişlet.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #f59e0b">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <h3 class="feature-title">Ekonomi Sistemi</h3>
+                        <p class="feature-description">
+                            Oyuncularla ticaret yap, mağaza aç ve zengin ol.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #ec4899">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="feature-title">Evlilik Sistemi</h3>
+                        <p class="feature-description">
+                            Sevdiğin oyuncuyla evlen ve birlikte büyük projeler yap.
+                        </p>
+                    </div>
+                <% } else if (gamemode === 'prison') { %>
+                    <div class="feature-card feature-highlight">
+                        <div class="feature-icon" style="background: <%= currentGame.color %>">
+                            <i class="fas fa-level-up-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Rank Sistemi</h3>
+                        <p class="feature-description">
+                            A rütbesinden başla, Z rütbesine çık ve sonunda özgür ol.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #3b82f6">
+                            <i class="fas fa-pickaxe"></i>
+                        </div>
+                        <h3 class="feature-title">Gelişmiş Madencilik</h3>
+                        <p class="feature-description">
+                            Otomatik satış, büyülü kazma ve özel madenler.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #ef4444">
+                            <i class="fas fa-fist-raised"></i>
+                        </div>
+                        <h3 class="feature-title">PvP Arenası</h3>
+                        <p class="feature-description">
+                            Diğer mahkumlarla dövüş ve ödüller kazan.
+                        </p>
+                    </div>
+                <% } else if (gamemode === 'skyblock') { %>
+                    <div class="feature-card feature-highlight">
+                        <div class="feature-icon" style="background: <%= currentGame.color %>">
+                            <i class="fas fa-island-tropical"></i>
+                        </div>
+                        <h3 class="feature-title">Özel Adalar</h3>
+                        <p class="feature-description">
+                            Sınırsız ada genişletme ve özelleştirme imkanı.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #10b981">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3 class="feature-title">Gelişmiş Tarım</h3>
+                        <p class="feature-description">
+                            Otomatik çiftlikler, özel tohumlar ve büyülü aletler.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: #fbbf24">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Ada Seviyesi</h3>
+                        <p class="feature-description">
+                            Adanı geliştir, seviye kas ve liderlik tablosunda yüksel.
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Play -->
+    <section style="background: #1f2937; padding: 80px 0;">
+        <div class="container">
+            <h2 class="section-title">Nasıl Oynanır?</h2>
+            <p class="section-subtitle">
+                <%= currentGame.name %> oynamaya başlamak için bu adımları takip et
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #10b981">
+                        <span style="font-weight: bold; font-size: 1.5rem;">1</span>
+                    </div>
+                    <h3 class="feature-title">Sunucuya Bağlan</h3>
+                    <p class="feature-description">
+                        Minecraft'ı aç ve <strong>play.minecrafttr.com</strong> adresine bağlan.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #3b82f6">
+                        <span style="font-weight: bold; font-size: 1.5rem;">2</span>
+                    </div>
+                    <h3 class="feature-title">Kayıt Ol</h3>
+                    <p class="feature-description">
+                        <code>/register şifre şifre</code> komutuyla hesap oluştur.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: #f59e0b">
+                        <span style="font-weight: bold; font-size: 1.5rem;">3</span>
+                    </div>
+                    <h3 class="feature-title">Oyuna Katıl</h3>
+                    <p class="feature-description">
+                        NPC'lerle etkileşime geç veya <code>/<%=gamemode%></code> komutunu kullan.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section style="background: linear-gradient(135deg, <%= currentGame.color %>, #1f2937); padding: 80px 0;">
+        <div class="container text-center">
+            <h2 style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 20px;">
+                Hemen <%= currentGame.name %> Oynamaya Başla!
+            </h2>
+            <p style="font-size: 1.2rem; color: rgba(255,255,255,0.9); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Binlerce oyuncunun katıldığı bu eğlenceli maceraya sen de katıl. Arkadaşlarını davet et ve birlikte oyna!
+            </p>
+            
+            <div class="server-ip" style="margin-bottom: 40px;">
+                <div>
+                    <i class="fas fa-server text-green"></i>
+                    <span class="ip-text">play.minecrafttr.com</span>
+                </div>
+                <button class="copy-btn" onclick="copyIP()">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <% if (typeof user === 'undefined' || !user) { %>
+                <a href="/register" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus"></i>Hesap Oluştur
+                </a>
+                <% } %>
+                <a href="/market" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-shopping-bag"></i>Market
+                </a>
+                <a href="/discord" class="btn btn-secondary btn-lg">
+                    <i class="fab fa-discord"></i>Discord
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="footer-brand">
+                        <img src="/images/logo.png" alt="MinecraftTR" onerror="this.style.display='none'">
+                        <span>MinecraftTR</span>
+                    </div>
+                    <p class="footer-description">
+                        Türkiye'nin en büyük ve en kaliteli Minecraft sunucusu. 
+                        Binlerce oyuncu ile eğlenceli vakit geçirin!
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Oyun Modları</h3>
+                    <ul class="footer-links">
+                        <li><a href="/games/bedwars">BedWars</a></li>
+                        <li><a href="/games/skywars">SkyWars</a></li>
+                        <li><a href="/games/survival">Survival</a></li>
+                        <li><a href="/games/prison">Prison</a></li>
+                        <li><a href="/games/skyblock">SkyBlock</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Sunucu Bilgileri</h3>
+                    <ul class="footer-links">
+                        <li>IP: <span class="text-green">play.minecrafttr.com</span></li>
+                        <li>Port: <span class="text-green">25565</span></li>
+                        <li>Version: <span class="text-green">1.8 - 1.21</span></li>
+                        <li>Cracked: <span class="text-green">Desteklenir</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p style="color: #9ca3af;">
+                    © 2024 MinecraftTR. Tüm hakları saklıdır.
+                </p>
+                <div class="footer-bottom-links">
+                    <a href="/privacy">Gizlilik Politikası</a>
+                    <a href="/terms">Kullanım Şartları</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/main.js"></script>
+    <script>
+        // Copy IP function
+        function copyIP() {
+            const ip = 'play.minecrafttr.com';
+            navigator.clipboard.writeText(ip).then(function() {
+                MinecraftTR.utils.showToast('IP kopyalandı! Minecraft\'a yapıştırabilirsin.');
+            });
+        }
+    </script>
+</body>
+</html>
